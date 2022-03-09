@@ -14,9 +14,12 @@
 #include <ratio>
 #include <chrono>
 
+#include "gc_3d_defs.hpp"
+
 
 using namespace glm;
 using namespace std::chrono;
 
 void jour1(int argc, char* argv[]);
 void jour2(int argc, char* argv[]);
+void jour3(int argc, char* argv[]);
