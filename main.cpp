@@ -172,7 +172,7 @@ void jour3(int argc, char* argv[]) {
             vec3(0.0, 1.0, 0.0) //position vertical
         );
 
-        vec4 FragColor;
+        /* FragColor;
 
         vec3 lightColor(1.0f, 1.0f, 1.0f);
         vec3 objectColor(0.0f, 0.0f, 1.0f);
@@ -181,7 +181,7 @@ void jour3(int argc, char* argv[]) {
         vec3 ambient = ambientStrength * lightColor;
 
         vec3 result = ambient * objectColor;
-        FragColor = vec4(result, 1.0);
+        FragColor = vec4(result, 1.0);*/
 
         glMatrixMode(GL_PROJECTION);
         auto projMat = glm::frustum<float>(-1.024, 0.768, -1.024, 0.768, 1.0, 100.0);
