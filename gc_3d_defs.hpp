@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-#include <vector>;
+#include <vector>
 
 namespace GC_3D
 {

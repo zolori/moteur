@@ -1,0 +1,72 @@
+/*Snippets to copy a directory containing shaders to the
+ output directory of the target moteur
+*/
+
+// In the CMakeLists.txt : 
+add_custom_target(copy_shaders COMMAND ${CMAKE_COMMAND}
+-E copy_directory ${CMAKE_SOURCE_DIR}/shaders $<TARGET_FILE_DIR:moteur>/shaders)
+
+add_dependencies(moteur copy_shaders)
+
+// In a hpp
+// Need C++17
+// add to the CMakeLists : set_property(TARGET moteur PROPERTY CXX_STANDARD 17)
+#pragma once 
+
+#include <string_view>
+std::string_view GetAppPath();
+
+// In a cpp
+#if WIN32
+#include <Windows.h>
+#endif
+
+namespace 
+{
+#ifdef WIN32
+    char exePath[MAX_PATH + 1] = { 0 };
+#else
+    char exePath[512] = { 0 };
+#endif
+
+    std::string_view exePathView;
+}
+
+std::string_view GetAppPath()
+{
+if (exePath[0] == 0)
+{
+#ifdef WIN32
+    HMODULE exeModule = GetModuleHandleA(nullptr);
+    uint32_t length = GetModuleFileNameA(exeModule, exePath, MAX_PATH);
+
+    for (uint32_t i = 0; i < length; ++i)
+    {
+    if (exePath[i] == '\\')
+    {
+        exePath[i] = '/';
+    }
+    }
+    exePathView = std::string_view(exePath, length);
+#else
+    ssize_t len = ::readlink("/proc/self/exe", exePath, sizeof(exePath) - 1);
+    if (len != -1)
+    {
+    exePath[len] = '\0';
+    char* posBack = strrchr(exePath, '/');
+    exePathView = std::string_view(exePath, len);
+    chdir(exePathView.begin());
+    }
+#endif
+}
+
+return exePathView;
+}
+
+// In main.cpp
+
+std::filesystem::path appPath(GetAppPath());
+auto appDir = appPath.parent_path();
+auto shaderPath = appDir / "shaders";
+auto vShaderPath = shaderPath / "defaultVertexShader.glsl";
+auto fShaderPath = shaderPath / "defaultFragmentShader.glsl";
