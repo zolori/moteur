@@ -29,11 +29,11 @@ void jour3(int argc, char* argv[]) {
         mat4 view = initCamera(beginTime);
 
         glMatrixMode(GL_PROJECTION);
-        auto projMat = glm::frustum<float>(-1.024, 0.768, -1.024, 0.768, 1.0, 100.0);
-        glLoadMatrixf(glm::value_ptr(projMat));
+        auto projMat = frustum<float>(-1.024, 0.768, -1.024, 0.768, 1.0, 100.0);
+        glLoadMatrixf(value_ptr(projMat));
 
         glMatrixMode(GL_MODELVIEW);
-        glLoadMatrixf(glm::value_ptr(view));
+        glLoadMatrixf(value_ptr(view));
 
         glTranslatef(0.0, 0.0, -2.0);
 

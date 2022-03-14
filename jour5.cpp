@@ -168,15 +168,15 @@ GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path)
 }
 
 void matrice() {
-	glm::mat4 myMatrix = glm::translate(glm::mat4(), glm::vec3(10.0f, 0.0f, 0.0f));
-	glm::vec4 myVector(10.0f, 10.0f, 10.0f, 0.0f);
+	mat4 myMatrix = translate(mat4(), vec3(10.0f, 0.0f, 0.0f));
+	vec4 myVector(10.0f, 10.0f, 10.0f, 0.0f);
 
 	// fill myMatrix and myVector somehow
-	glm::vec4 transformedVector = myMatrix * myVector; // Again, in this order ! this is important.
-	glm::mat4 myIdentityMatrix = glm::mat4(1.0f);
+	vec4 transformedVector = myMatrix * myVector; // Again, in this order ! this is important.
+	mat4 myIdentityMatrix = mat4(1.0f);
 
 	// Use #include <glm/gtc/matrix_transform.hpp> and #include <glm/gtx/transform.hpp>
-	glm::mat4 myScalingMatrix = glm::scale(myMatrix,vec3(2.0f, 2.0f, 2.0f));
+	mat4 myScalingMatrix = scale(myMatrix,vec3(2.0f, 2.0f, 2.0f));
 }
 
 void cube() {
@@ -209,8 +209,28 @@ void cube() {
 
         glUseProgram(programID);
         initClear();
-        mat4 view = initCamera(beginTime);
-        initProjection(view);
+
+        mat4 ViewMatrix = translate(mat4(), vec3(-3.0f, 0.0f, 0.0f));
+        // Camera matrix
+        mat4 View = glm::lookAt(
+            glm::vec3(4, 3, 3), // Camera is at (4,3,3), in World Space
+            glm::vec3(0, 0, 0), // and looks at the origin
+            glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+        );
+        // Generates a really hard-to-read matrix, but a normal, standard 4x4 matrix nonetheless
+        mat4 Projection = perspective(radians(45.0f), 1024.0f / 768.0f, 0.1f, 100.0f);
+        mat4 Model = mat4(1.0f);
+        mat4 mvp = Projection * View * Model;
+
+        // Get a handle for our "MVP" uniform
+        // Only during the initialisation
+        GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+
+        // Send our transformation to the currently bound shader, in the "MVP" uniform
+        // This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
+        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
+
+        initProjection(View);
         //lights();
 
         static const GLfloat g_vertex_buffer_data[] = {
