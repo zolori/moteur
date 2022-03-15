@@ -25,11 +25,11 @@ add_executable(moteur
 	SimpleFragmentShader.fragmentshader
 	SimpleVertexShader.vertexshader
 	Quick.cpp
-	imgui-snippet.cpp
 )
 
 target_include_directories(moteur PRIVATE
 	${SDL_INCLUDE_DIR}
 	${GLM_INCLUDE_DIR}
+	${IMGUI_INCLUDE_DIR}
 )
 target_link_libraries(moteur PRIVATE SDL2-static SDL2main opengl32 glew imgui)
