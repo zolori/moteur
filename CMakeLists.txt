@@ -20,6 +20,8 @@ add_executable(moteur
 	SimpleFragmentShader.fragmentshader
 	SimpleVertexShader.vertexshader
 	Quick.cpp
+	Buffer.h
+	Buffer.cpp
 )
 
 target_include_directories(moteur PRIVATE
