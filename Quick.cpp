@@ -95,3 +95,213 @@ void initApp(SDL_Window* win)
 
     ImGui::StyleColorsDark();
 }
+
+GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path) {
+
+    // Create the shaders
+    GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+    GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+
+    // Read the Vertex Shader code from the file
+    string VertexShaderCode;
+    ifstream VertexShaderStream(vertex_file_path, ios::in);
+    if (VertexShaderStream.is_open()) {
+        stringstream sstr;
+        sstr << VertexShaderStream.rdbuf();
+        VertexShaderCode = sstr.str();
+        VertexShaderStream.close();
+    }
+    else {
+        printf("Impossible to open %s. Are you in the right directory ? Don't forget to read the FAQ !\n", vertex_file_path);
+        getchar();
+        return 0;
+    }
+
+    // Read the Fragment Shader code from the file
+    string FragmentShaderCode;
+    ifstream FragmentShaderStream(fragment_file_path, ios::in);
+    if (FragmentShaderStream.is_open()) {
+        stringstream sstr;
+        sstr << FragmentShaderStream.rdbuf();
+        FragmentShaderCode = sstr.str();
+        FragmentShaderStream.close();
+    }
+
+    GLint Result = GL_FALSE;
+    int InfoLogLength;
+
+
+    // Compile Vertex Shader
+    printf("Compiling shader : %s\n", vertex_file_path);
+    char const* VertexSourcePointer = VertexShaderCode.c_str();
+    glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
+    glCompileShader(VertexShaderID);
+
+    // Check Vertex Shader
+    glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
+    glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+    if (InfoLogLength > 0) {
+        vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
+        glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+        printf("%s\n", &VertexShaderErrorMessage[0]);
+    }
+
+
+
+    // Compile Fragment Shader
+    printf("Compiling shader : %s\n", fragment_file_path);
+    char const* FragmentSourcePointer = FragmentShaderCode.c_str();
+    glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
+    glCompileShader(FragmentShaderID);
+
+    // Check Fragment Shader
+    glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
+    glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+    if (InfoLogLength > 0) {
+        vector<char> FragmentShaderErrorMessage(InfoLogLength + 1);
+        glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
+        printf("%s\n", &FragmentShaderErrorMessage[0]);
+    }
+
+
+
+    // Link the program
+    printf("Linking program\n");
+    GLuint ProgramID = glCreateProgram();
+    glAttachShader(ProgramID, VertexShaderID);
+    glAttachShader(ProgramID, FragmentShaderID);
+    glLinkProgram(ProgramID);
+
+    // Check the program
+    glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
+    glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+    if (InfoLogLength > 0) {
+        vector<char> ProgramErrorMessage(InfoLogLength + 1);
+        glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+        printf("%s\n", &ProgramErrorMessage[0]);
+    }
+
+
+    glDetachShader(ProgramID, VertexShaderID);
+    glDetachShader(ProgramID, FragmentShaderID);
+
+    glDeleteShader(VertexShaderID);
+    glDeleteShader(FragmentShaderID);
+
+    return ProgramID;
+}
+
+bool loadTexture(const char* imagepath) {
+
+    // ---------------- Load Textures -----------------
+
+    // Data read from the header of the BMP file
+    unsigned char header[54]; // Each BMP file begins by a 54-bytes header
+    unsigned int dataPos;     // Position in the file where the actual data begins
+    unsigned int width, height;
+    unsigned int imageSize;   // = width*height*3
+    // Actual RGB data
+    unsigned char* data;
+
+    // Open the file
+    FILE* file = fopen(imagepath, "rb");
+
+    if (!file) { 
+        printf("Image could not be opened\n"); 
+        return 0; 
+    }
+
+    if (fread(header, 1, 54, file) != 54) { // If not 54 bytes read : problem
+        printf("Not a correct BMP file\n");
+        return false;
+    }
+
+    if (header[0] != 'B' || header[1] != 'M') {
+        printf("Not a correct BMP file\n");
+        return 0;
+    }
+
+    // Read ints from the byte array
+    dataPos = *(int*)&(header[0x0A]);
+    imageSize = *(int*)&(header[0x22]);
+    width = *(int*)&(header[0x12]);
+    height = *(int*)&(header[0x16]);
+
+    // Some BMP files are misformatted, guess missing information
+    if (imageSize == 0)    imageSize = width * height * 3;      // 3 : one byte for each Red, Green and Blue component
+    if (dataPos == 0)      dataPos = 54;                        // The BMP header is done that way
+
+    // Create a buffer
+    data = new unsigned char[imageSize];
+
+    // Read the actual data from the file into the buffer
+    fread(data, 1, imageSize, file);
+
+    //Everything is in memory now, the file can be closed
+    fclose(file);
+
+    // ---------------- Create texture -----------------
+
+    // Create one OpenGL texture
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+
+    // "Bind" the newly created texture : all future texture functions will modify this texture
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Give the image to OpenGL
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    // Two UV coordinatesfor each vertex. They were created with Blender. You'll learn shortly how to do this yourself.
+    static const GLfloat g_uv_buffer_data[] = {
+        0.000059f, 1.0f - 0.000004f,
+        0.000103f, 1.0f - 0.336048f,
+        0.335973f, 1.0f - 0.335903f,
+        1.000023f, 1.0f - 0.000013f,
+        0.667979f, 1.0f - 0.335851f,
+        0.999958f, 1.0f - 0.336064f,
+        0.667979f, 1.0f - 0.335851f,
+        0.336024f, 1.0f - 0.671877f,
+        0.667969f, 1.0f - 0.671889f,
+        1.000023f, 1.0f - 0.000013f,
+        0.668104f, 1.0f - 0.000013f,
+        0.667979f, 1.0f - 0.335851f,
+        0.000059f, 1.0f - 0.000004f,
+        0.335973f, 1.0f - 0.335903f,
+        0.336098f, 1.0f - 0.000071f,
+        0.667979f, 1.0f - 0.335851f,
+        0.335973f, 1.0f - 0.335903f,
+        0.336024f, 1.0f - 0.671877f,
+        1.000004f, 1.0f - 0.671847f,
+        0.999958f, 1.0f - 0.336064f,
+        0.667979f, 1.0f - 0.335851f,
+        0.668104f, 1.0f - 0.000013f,
+        0.335973f, 1.0f - 0.335903f,
+        0.667979f, 1.0f - 0.335851f,
+        0.335973f, 1.0f - 0.335903f,
+        0.668104f, 1.0f - 0.000013f,
+        0.336098f, 1.0f - 0.000071f,
+        0.000103f, 1.0f - 0.336048f,
+        0.000004f, 1.0f - 0.671870f,
+        0.336024f, 1.0f - 0.671877f,
+        0.000103f, 1.0f - 0.336048f,
+        0.336024f, 1.0f - 0.671877f,
+        0.335973f, 1.0f - 0.335903f,
+        0.667969f, 1.0f - 0.671889f,
+        1.000004f, 1.0f - 0.671847f,
+        0.667979f, 1.0f - 0.335851f
+    };
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    // When MAGnifying the image (no bigger mipmap available), use LINEAR filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // When MINifying the image, use a LINEAR blend of two mipmaps, each filtered LINEARLY too
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    // Generate mipmaps, by the way.
+    glGenerateMipmap(GL_TEXTURE_2D);
+}
