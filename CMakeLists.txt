@@ -22,6 +22,8 @@ add_executable(moteur
 	Quick.cpp
 	Buffer.h
 	Buffer.cpp
+	Component.h
+	Component.cpp
 )
 
 target_include_directories(moteur PRIVATE
