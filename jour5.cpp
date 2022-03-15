@@ -190,8 +190,7 @@ void cube() {
         768,
         windowsFlags);
 
-    SDL_GLContext context = SDL_GL_CreateContext(win);
-    SDL_GL_MakeCurrent(win, context);
+    initApp(win);
 
     glewInit();
 

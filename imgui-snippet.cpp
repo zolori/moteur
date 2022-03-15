@@ -1,7 +1,7 @@
 #include "projet.h"
-// ...
+// ... ok
 //App init
-
+/*
 SDL_GLContext context = SDL_GL_CreateContext(win);
 SDL_GL_MakeCurrent(win, context);
 
@@ -11,7 +11,7 @@ ImGuiIO& io = ImGui::GetIO();
 io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 
 ImGui_ImplSDL2_InitForOpenGL(win, context);
-ImGui_ImplOpenGL2_Init();
+ImGui_ImplOpenGL3_Init();
 
 ImGui::StyleColorsDark();
 
@@ -60,4 +60,4 @@ ImGui::Render();
 ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
 //Swap window as usual
-SDL_GL_SwapWindow(win);
+SDL_GL_SwapWindow(win);*/

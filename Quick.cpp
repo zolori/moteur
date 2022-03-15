@@ -79,3 +79,19 @@ void initBuffer(const GLfloat g_vertex_buffer_data[]) {
         (void*)0            // array buffer offset
     );
 }
+
+void initApp(SDL_Window* win)
+{
+    SDL_GLContext context = SDL_GL_CreateContext(win);
+    SDL_GL_MakeCurrent(win, context);
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+
+    ImGui_ImplSDL2_InitForOpenGL(win, context);
+    ImGui_ImplOpenGL3_Init();
+
+    ImGui::StyleColorsDark();
+}

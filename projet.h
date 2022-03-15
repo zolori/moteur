@@ -24,6 +24,10 @@
 #include <glm/gtx/transform.hpp>
 #include <SDL.h>
 
+#include "dep/imgui/imgui.h"
+#include "dep/imgui/backends/imgui_impl_sdl.h"
+#include "dep/imgui/backends/imgui_impl_opengl3.h"
+
 #include <iostream>
 #include <ctime>
 #include <ratio>
@@ -52,3 +56,4 @@ GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path)
 void matrice();
 void cube();
 void initBuffer(const GLfloat g_vertex_buffer_data[]);
+void initApp(SDL_Window* win);

@@ -23,9 +23,12 @@ else()
   set(IMGUI_SRCS ${IMGUI_SRCS} ${IMGUI_DIR}/backends/imgui_impl_opengl2.cpp)
 endif()
 
-add_library(imgui ${IMGUI_SRCS})
+add_library(imgui STATIC ${IMGUI_SRCS})
 target_include_directories(imgui PRIVATE 
   ${IMGUI_DIR}
   ${SDL_INCLUDE_DIR}
 )
 
+if(${IMGUI_USE_OGL3})
+target_link_libraries(imgui glew)
+endif()
