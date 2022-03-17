@@ -1,7 +1,7 @@
 #include "projet.h"
 // ... ok
 //App init
-/*
+
 SDL_GLContext context = SDL_GL_CreateContext(win);
 SDL_GL_MakeCurrent(win, context);
 
@@ -38,7 +38,7 @@ while (SDL_PollEvent(&curEvent))
 //...
 
 //Render Loop
-ImGui_ImplOpenGL2_NewFrame();
+ImGui_ImplOpenGL3_NewFrame();
 ImGui_ImplSDL2_NewFrame(win);
 
 ImGui::NewFrame();
@@ -57,7 +57,7 @@ ImGui::End();
 //Rendering end
 
 ImGui::Render();
-ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 //Swap window as usual
-SDL_GL_SwapWindow(win);*/
+SDL_GL_SwapWindow(win);

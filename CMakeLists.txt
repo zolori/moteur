@@ -22,6 +22,7 @@ add_executable(moteur
 	jour3.cpp
 	jour4.cpp
 	jour5.cpp
+	jour6.cpp
 	SimpleFragmentShader.fragmentshader
 	SimpleVertexShader.vertexshader
 	Quick.cpp
