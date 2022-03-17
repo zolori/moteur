@@ -1,12 +1,11 @@
 #pragma once
 #include "Component.h"
-#include "ComponentName.h"
-#include "projet.h"
+#include "Header.h"
 class Transform : public Component
 {
 public:
 	//Constructor
-	Transform(glm::vec3 Position = glm::vec3(1.0f), glm::vec3 Rotation = glm::vec3(0.0f), glm::vec3 Scale = glm::vec3(1.0f));
+	Transform(glm::vec3 Position = glm::vec3(0.0f), glm::vec3 Rotation = glm::vec3(0.0f), glm::vec3 Scale = glm::vec3(1.0f));
 	//Getter
 	inline glm::vec3 GetPosition() { return position; };
 	inline glm::vec3 GetRotation() { return rotation; };

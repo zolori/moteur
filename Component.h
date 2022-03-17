@@ -1,5 +1,4 @@
 //Miscellaneous
-#include <string>
 #include "ComponentName.h"
 #pragma once
 class Component

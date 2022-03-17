@@ -3,9 +3,6 @@
 #include <vector>
 #include <memory>
 #include "Component.h"
-
-enum ComponentType { };
-
 class Object
 {
 public:
