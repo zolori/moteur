@@ -1,19 +1,20 @@
 //Miscellaneous
 #include <string>
-#include <unordered_map>
+#include "ComponentName.h"
 #pragma once
 class Component
 {
 public:
-	//Constructeur
-	Component(std::string Name);
-	//Getter
-	inline std::string GetName() { return name; };
+	//Constructor
+	Component();
+	//Copy Constructeur
+	Component(Component&) = delete;
+	//Move constructeur
+	Component(Component&&) = default;
 	//Pure virtual function to override to create a non abstract daughter of this class
 	virtual void f() = 0;
-private:
 	//Attribute
-	std::string name;
-	std::unordered_map(std::string, )
+	ComponentName name;
+
 };
 

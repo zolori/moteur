@@ -24,6 +24,16 @@ add_executable(moteur
 	Buffer.cpp
 	Component.h
 	Component.cpp
+	ComponentName.h
+	Object.h
+	Object.cpp
+	Transform.h
+	Transform.cpp
+	Mesh.h
+	Mesh.cpp
+	Texture.h
+	Texture.cpp
+	stb_image.h
 )
 
 target_include_directories(moteur PRIVATE

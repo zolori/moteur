@@ -6,18 +6,14 @@ Object::Object(std::string Name, std::string Tag)
 	tag = Tag;
 }
 
-void Object::RemoveComponent(std::string ComponentName)
+void Object::RemoveComponent(ComponentName ComponentName)
 {
 	for (size_t i = 0; i < components.size(); i++)
 	{
-		if (components[i]->GetName() == ComponentName)
+		if (components[i]->name == ComponentName)
 		{
 			components.erase(components.begin() + i);
 			return;
 		}
 	}
-}
-
-void Object::Update()
-{
 }

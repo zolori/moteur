@@ -14,10 +14,13 @@ public:
 	//Getter
 	inline std::string GetName() { return name; };
 	inline std::string GetTag() { return tag; };
-	inline std::vector<std::unique_ptr<Component>> GetComponents()  { return components; };
+	inline std::vector<std::unique_ptr<Component>> GetComponents()  { return std::move(components); };
 	//Function
 	inline void AddComponent(std::unique_ptr<Component> ComponentToAdd) { components.push_back(std::move(ComponentToAdd)); };
-	void RemoveComponent(std::string ComponentName);
+	void RemoveComponent(ComponentName ComponentName);
+
+	virtual void Update() {};
+	virtual void Draw() {};
 private:
 	std::string name;
 	std::string tag;
