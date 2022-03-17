@@ -80,7 +80,7 @@ void initBuffer(const GLfloat g_vertex_buffer_data[]) {
     );
 }
 
-void initApp(SDL_Window* win)
+ImGuiIO& initApp(SDL_Window* win)
 {
     SDL_GLContext context = SDL_GL_CreateContext(win);
     SDL_GL_MakeCurrent(win, context);
@@ -94,6 +94,8 @@ void initApp(SDL_Window* win)
     ImGui_ImplOpenGL3_Init();
 
     ImGui::StyleColorsDark();
+
+    return io;
 }
 
 GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path) {
@@ -304,4 +306,27 @@ bool loadTexture(const char* imagepath) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     // Generate mipmaps, by the way.
     glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+GLuint loadTGA_glfw(const char * imagepath){
+
+    // Create one OpenGL texture
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+
+    // "Bind" the newly created texture : all future texture functions will modify this texture
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Read the file, call glTexImage2D with the right parameters
+    //glfwLoadTexture2D(imagepath, 0);
+
+    // Nice trilinear filtering.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Return the ID of the texture we just created
+    return textureID;
 }

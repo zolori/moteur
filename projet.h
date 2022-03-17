@@ -56,7 +56,9 @@ GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path)
 void matrice();
 void cube();
 void initBuffer(const GLfloat g_vertex_buffer_data[]);
-void initApp(SDL_Window* win);
+ImGuiIO& initApp(SDL_Window* win);
 GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
 void cubeTexture();
 GLuint loadBMP_custom(const char* imagepath);
+
+
