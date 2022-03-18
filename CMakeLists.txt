@@ -25,12 +25,21 @@ add_executable(moteur
 	jour4.cpp
 	jour5.cpp
 	jour6.cpp
+	jour8.cpp
 	SimpleFragmentShader.fragmentshader
 	SimpleVertexShader.vertexshader
 	Quick.cpp
 	TextureFShader.fragmentshader
+	j8Fshader.fragmentshader
 	TextureVShader.vertexshader
+	j8Vshader.vertexshader
 )
+
+# add_custom_target(copy_shaders COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shaders $<TARGET_FILE_DIR:moteur>/shaders)
+add_custom_target(copy_ressources COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/../Ressources $<TARGET_FILE_DIR:moteur>/../Ressources)
+
+add_dependencies(moteur copy_ressources)
+set_property(TARGET moteur PROPERTY CXX_STANDARD 17)
 
 target_include_directories(moteur PRIVATE
 	${SDL_INCLUDE_DIR}

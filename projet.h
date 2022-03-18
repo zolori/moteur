@@ -32,8 +32,24 @@
 #include <ctime>
 #include <ratio>
 #include <chrono>
+#include <filesystem>
 
 #include "gc_3d_defs.hpp"
+
+#include <string_view>
+#if WIN32
+#include <Windows.h>
+#endif
+
+namespace
+{
+	#ifdef WIN32
+		char exePath[MAX_PATH + 1] = { 0 };
+	#else
+		char exePath[512] = { 0 };
+	#endif
+		std::string_view exePathView;
+}
 
 using namespace glm;
 using namespace std::chrono;
@@ -60,5 +76,8 @@ ImGuiIO& initApp(SDL_Window* win);
 GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
 void cubeTexture();
 //GLuint loadBMP_custom(const char* imagepath);
+bool loadOBJ(const char* path, vector < vec3 >& out_vertices, vector < vec2 >& out_uvs, vector < vec3 >& out_normals);
+void loadModel();
+string_view GetAppPath();
 
 

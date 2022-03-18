@@ -7,7 +7,8 @@ int main(int argc, char* argv[]) {
     //jour3(argc, argv);
     //jour4(argc, argv);
     //jour5(argc, argv);
-    cubeTexture();
+    //cubeTexture();
+    loadModel();
 
 	return 0;
 }
