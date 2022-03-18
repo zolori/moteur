@@ -1,25 +1,43 @@
 #pragma once
-#include <stdlib.h>
-#include <stdio.h>
 #include <GL/glew.h>
 class Texture
 {
 public:
-	//Constructor
+	//Constructor of the Texture class.
 	Texture();
-	//Destructor
+	//Destructor of the Texture class.
 	~Texture();
-	//Getter
-	inline GLuint GetName() { return name; }
+	/**
+	* Getter for Texname
+	* @return Return a GLuint 
+	*/
+	inline GLuint GetName() { return Texname; }
+	/**
+	* Getter for the imgWidth
+	* @return Return an int
+	*/
 	inline int GetWidth() { return imgWidth; }
+	/**
+	* Getter for the imgHeight
+	* @return Return an int
+	*/
 	inline int GetHeight() { return imgHeight; }
-	//Function
+	/**
+	* Load the image passed in the filepath bind it, and sets the parameter required to display the image correctly
+	* 
+	* @param filepath to the image you want to load
+	* @return retun true if the load was succesfull, else return false
+	*/
 	bool loadIMG(const char* filepath);
+	/**
+	* Call glActiveTexture and glBindTexture from OpenGL to use the texture for rendering
+	*/
 	void useIMG(int unit);
 
 private:
 	//Attribute
-	GLuint name;
+
+	GLuint Texname;
 	int imgWidth;
 	int imgHeight;
 };

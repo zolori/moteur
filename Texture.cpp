@@ -1,19 +1,16 @@
 #include "Texture.h"
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#endif // !STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 Texture::Texture() 
 {
 	imgWidth = 0;
 	imgHeight = 0;
-	glGenTextures(1, &name);
+	glGenTextures(1, &Texname);
 }
 
 Texture::~Texture()
 {
-	glDeleteTextures(1, &name);
+	glDeleteTextures(1, &Texname);
 }
 
 bool Texture::loadIMG(const char* filepath) 
@@ -27,7 +24,7 @@ bool Texture::loadIMG(const char* filepath)
 		printf("ERROR:TEXTURE_LOADING_FAILED\n");
 		return false;
 	}
-	glBindTexture(GL_TEXTURE_2D, name);
+	glBindTexture(GL_TEXTURE_2D, Texname);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -45,5 +42,5 @@ bool Texture::loadIMG(const char* filepath)
 void Texture::useIMG(int unit)
 {
 	glActiveTexture(GL_TEXTURE0 + unit);
-	glBindTexture(GL_TEXTURE_2D, name);
+	glBindTexture(GL_TEXTURE_2D, Texname);
 }

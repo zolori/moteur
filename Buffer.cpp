@@ -1,38 +1,27 @@
 #include "Buffer.h"
 
-/// <summary>
-/// Constructor
-/// </summary>
-/// <param name="BufferData">Data to put in the buffer, a std::vector<GLfloat></param>
-/// <param name="n">Index of the vector to be used by the shader</param>
-/// <param name="s">Number of GLfloat to be used as a single point.
-///					IE: 2 for a texture (U V) or 3 for a vertice (X Y Z)</param>
-Buffer::Buffer(std::vector<GLfloat> const &BufferData, GLsizei n, GLint s)
+Buffer::Buffer(std::vector<GLfloat> const &BufferData, GLsizei Location, GLint Size, GLenum BufferType)
 {
-	index = n;
-	size = s;
+	location = Location;
+	size = Size;
+	bufferType = BufferType;
 	glGenBuffers(1, &bufferIdentifier);
-	glBindBuffer(GL_ARRAY_BUFFER, bufferIdentifier);
-	glBufferData(GL_ARRAY_BUFFER, BufferData.size() * sizeof(GLfloat), BufferData.data(), GL_STATIC_DRAW);
+	glBindBuffer(bufferType, bufferIdentifier);
+	glBufferData(bufferType, BufferData.size() * sizeof(GLfloat), BufferData.data(), GL_STATIC_DRAW);
 }
 
-/// <summary>
-/// Destructor
-/// </summary>
 Buffer::~Buffer()
 {
 	glDeleteBuffers(1, &bufferIdentifier);
 }
 
-/// <summary>
-/// Draw the buffer
-/// </summary>
-void Buffer::DrawBuffer()
+
+void Buffer::BindBuffer()
 {
-	glEnableVertexAttribArray(index);
-	glBindBuffer(GL_ARRAY_BUFFER, bufferIdentifier);
+	glEnableVertexAttribArray(location);
+	glBindBuffer(bufferType, bufferIdentifier);
 	glVertexAttribPointer(
-		index,
+		location,
 		size,
 		GL_FLOAT,
 		GL_FALSE,
@@ -41,10 +30,7 @@ void Buffer::DrawBuffer()
 	);
 }
 
-/// <summary>
-/// Disable the channel used to draw the buffer
-/// </summary>
 void Buffer::DisableBuffer()
 {
-	glDisableVertexAttribArray(index);
+	glDisableVertexAttribArray(location);
 }

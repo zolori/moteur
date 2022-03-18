@@ -1,8 +1,6 @@
-#include "Buffer.h"
-#include "Component.h"
-#include "Texture.h"
+#include "IndicesBuffer.h"
+#include "AssimpImporter.h"
 #include "shader/loadShader.hpp"
-#include "gc_3d_defs.hpp"
 
 using Time = std::chrono::steady_clock;
 using ms = std::chrono::milliseconds;
@@ -24,6 +22,10 @@ int main(int argc, char* argv[])
         768,
         windowsFlags);
 
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_PROFILE_CORE);
+
     SDL_GLContext context = SDL_GL_CreateContext(win);
     SDL_GL_MakeCurrent(win, context);
     //SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -37,7 +39,9 @@ int main(int argc, char* argv[])
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
-
+    
+    Mesh* ArrayOfMeshToBeDrawn[1];
+    /*
     std::vector<GLfloat> g_vertex_cube_buffer_data = {
         -1.0f,-1.0f,-1.0f, // triangle 1 : begin
         -1.0f,-1.0f, 1.0f,
@@ -78,58 +82,6 @@ int main(int argc, char* argv[])
     };
 
     Buffer* CubeVertexBuffer = new Buffer(g_vertex_cube_buffer_data, 0, 3);
-    //color cube buffer
-    /*
-    static GLfloat g_color_cube_buffer_data[] = {
-    -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-    -1.0f,-1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f, // triangle 1 : end
-    1.0f, 1.0f,-1.0f, // triangle 2 : begin
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f, // triangle 2 : end
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f
-    };
-
-    for (int i = 0; i < 12 * 3; i++)
-    {
-        g_color_cube_buffer_data[3 * i + 0] = rand() % 3 + (-1);
-        g_color_cube_buffer_data[3 * i + 1] = rand() % 3 + (-1);
-        g_color_cube_buffer_data[3 * i + 2] = rand() % 3 + (-1);
-    }
-
-    GLuint colorBufferCube;
-    glGenBuffers(1, &colorBufferCube);
-    glBindBuffer(GL_ARRAY_BUFFER, colorBufferCube);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_cube_buffer_data), g_color_cube_buffer_data, GL_STATIC_DRAW);*/
 
     std::vector<GLfloat> g_uv_cube_buffer_data = {
         0.0f, 1.0f,
@@ -171,39 +123,13 @@ int main(int argc, char* argv[])
     };
 
     Buffer* CubeUVBuffer = new Buffer(g_uv_cube_buffer_data, 1, 2);
-
-    //triangle buffer
-    /*
-    static const GLfloat g_vertex_triangle_buffer_data[] = {
-        1.0f, 1.0f, 1.0f,
-        0.0f, 1.0f, 1.0f,
-        0.0f, 0.0f, 1.0f
-    };
-
-    GLuint vertexBufferTriangle;
-    glGenBuffers(1, &vertexBufferTriangle);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferTriangle);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_triangle_buffer_data), g_vertex_triangle_buffer_data, GL_STATIC_DRAW);
-
-    static  GLfloat g_color_triangle_buffer_data[] = {
-        1.0f, 1.0f, 1.0f,
-        0.0f, 1.0f, 1.0f,
-        0.0f, 0.0f, 1.0f
-    };
-
-    for (int i = 0; i < 3; i++)
-        {
-            g_color_triangle_buffer_data[3 * i + 0] = rand() % 3 + (-1);
-            g_color_triangle_buffer_data[3 * i + 1] = rand() % 3 + (-1);
-            g_color_triangle_buffer_data[3 * i + 2] = rand() % 3 + (-1);
-        }
-
-        GLuint colorBufferTriangle;
-        glGenBuffers(1, &colorBufferTriangle);
-        glBindBuffer(GL_ARRAY_BUFFER, colorBufferTriangle);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_triangle_buffer_data), g_color_triangle_buffer_data, GL_STATIC_DRAW);
     */
-
+    const aiScene* scene = DoTheImport("C:/Users/abouffay/Documents/GitHub/Husky.fbx");
+    if (scene != nullptr)
+    {
+        Mesh* MeshToBeDrawn = SceneProcessing(scene);
+        ArrayOfMeshToBeDrawn[0] = MeshToBeDrawn;
+    }
    SDL_bool apprunning = SDL_TRUE;
     while (apprunning)
     {
@@ -218,6 +144,8 @@ int main(int argc, char* argv[])
         }
 
         glUseProgram(programID);
+
+        ArrayOfMeshToBeDrawn[0]->Draw();
 
         glm::mat4 Projection = glm::perspective(glm::radians(45.0f), (float)1024 / (float)768, 0.1f, 100.0f);
 
@@ -243,7 +171,7 @@ int main(int argc, char* argv[])
         glDepthFunc(GL_LESS);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        CubeVertexBuffer->DrawBuffer();
+        //CubeVertexBuffer->BindBuffer();
 
         //color cube buffer
         /*glEnableVertexAttribArray(1);
@@ -257,9 +185,9 @@ int main(int argc, char* argv[])
             (void*)0
         );*/
 
-        CubeUVBuffer->DrawBuffer();
+        //CubeUVBuffer->BindBuffer();
 
-        glDrawArrays(GL_TRIANGLES, 0, 12 * 3);
+        //glDrawArrays(GL_TRIANGLES, 0, 12 * 3);
         //Triangle matrix
         /*
         mat4 ModelTriangle = translate(identity<mat4>(), vec3(3.0f, 0, 0));
@@ -292,12 +220,12 @@ int main(int argc, char* argv[])
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
         */
-        CubeVertexBuffer->DisableBuffer();
-        CubeUVBuffer->DisableBuffer();
+        //CubeVertexBuffer->DisableBuffer();
+        //CubeUVBuffer->DisableBuffer();
         SDL_GL_SwapWindow(win);
     }
-    delete CubeVertexBuffer;
-    delete CubeUVBuffer;
+    //delete CubeVertexBuffer;
+    //delete CubeUVBuffer;
     return 0;
 }
 
