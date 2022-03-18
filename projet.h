@@ -59,6 +59,6 @@ void initBuffer(const GLfloat g_vertex_buffer_data[]);
 ImGuiIO& initApp(SDL_Window* win);
 GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
 void cubeTexture();
-GLuint loadBMP_custom(const char* imagepath);
+//GLuint loadBMP_custom(const char* imagepath);
 
 

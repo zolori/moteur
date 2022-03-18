@@ -2,31 +2,6 @@
 
 #include <glm/gtx/transform.hpp>
 
-using Clock = std::chrono::high_resolution_clock;
-using Timestamp = Clock::time_point;
-using Duration = Clock::duration;
-
-inline float Seconds(Duration const& iDuration)
-{
-    return std::chrono::duration_cast<std::chrono::duration<float>>(iDuration).count();
-}
-
-struct DeltaTime {
-    Timestamp currentTime;
-    Timestamp lastTime;
-    float deltaTime;
-    Duration duration;
-    float GetDeltaTime();
-};
-
-float DeltaTime::GetDeltaTime()
-{
-    lastTime = Clock::now();
-    currentTime = Clock::now();
-    duration = currentTime - lastTime;
-    deltaTime = Seconds(duration);
-    return deltaTime;
-}
 
 void cubeTexture() {
     SDL_Init(SDL_INIT_VIDEO);
@@ -41,7 +16,6 @@ void cubeTexture() {
 
     ImGuiIO&  io = initApp(win);
 
-    struct DeltaTime time;
     glewInit();
 
     // Create and compile our GLSL program from the shaders
@@ -54,7 +28,6 @@ void cubeTexture() {
     while (appRunning)
     {
         SDL_Event curEvent;
-        float deltaTime = time.GetDeltaTime();
         while (SDL_PollEvent(&curEvent)) {
             ImGui_ImplSDL2_ProcessEvent(&curEvent);
             if (!io.WantCaptureMouse)
