@@ -7,6 +7,9 @@
 
 #define SDL_WIDTH 1024
 #define SDL_HEIGHT 728
+#define SHADER_DIRECTORY "shader"
+#define VERTEX_SHADER "firstVertexShader.txt"
+#define FRAGMENT_SHADER "firstFragmentShader.txt"
 
 using namespace std;
 using namespace glm;
@@ -30,8 +33,7 @@ SDL_Window* SetUpWindow()
     glewInit();
     return win;
 }
-
-
+ 
 struct DeltaTime {
     Timestamp currentTime;
     Timestamp lastTime;
@@ -56,7 +58,7 @@ int main(int argc, char* argv[])
 
     glewInit();
 
-    GLuint programID = FindShaders("shader","firstVertexShader.txt", "firstFragmentShader.txt");
+    GLuint programID = FindShaders(SHADER_DIRECTORY, VERTEX_SHADER,FRAGMENT_SHADER);
 
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
