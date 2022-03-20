@@ -22,6 +22,8 @@ add_executable(moteur
 	shader/loadShader.cpp
 	Buffer.h
 	Buffer.cpp
+	IndicesBuffer.h
+	IndicesBuffer.cpp
 	Component.h
 	Component.cpp
 	ComponentName.h
@@ -35,8 +37,10 @@ add_executable(moteur
 	Texture.cpp
 	stb_image.h
 	Header.h
-	Importer.h
-	Importer.cpp
+	AssimpImporter.h
+	AssimpImporter.cpp
+	VertexAssembly.h
+	VertexAssembly.cpp
 )
 
 target_include_directories(moteur PRIVATE
@@ -44,4 +48,4 @@ target_include_directories(moteur PRIVATE
 	${GLM_INCLUDE_DIR}
 	${ASSIMP_INCLUDE_DIR}
 )
-target_link_libraries(moteur PRIVATE SDL2-static SDL2main opengl32 glew)
+target_link_libraries(moteur PRIVATE SDL2-static SDL2main opengl32 glew assimp)
