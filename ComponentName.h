@@ -4,5 +4,6 @@
 enum class ComponentName 
 {
 	TRANSFORM_COMPONENT, 
-	MESH_COMPONENT
+	MESH_COMPONENT,
+	CAM_COMPONENT
 };

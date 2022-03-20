@@ -6,7 +6,76 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cstdio>
+#ifdef _WIN32
+#include <windows.h>
+#endif
+#include <GL/glew.h>
+#include <SDL.h>
 #include <vector>
+#include "loadShader.hpp"
+#include <filesystem>
+
+
+namespace
+{
+#ifdef WIN32
+	char exePath[MAX_PATH + 1] = { 0 };
+#else
+	char exePath[512] = { 0 };
+#endif
+
+	std::string_view exePathView;
+}
+
+GLuint FindShaders(const char* directory, const char* vertexShaderFN, const char* fragmentShaderFN)
+{
+	std::filesystem::path appPath(GetAppPath());
+	auto appDir = appPath.parent_path();
+	auto shaderPath = appDir / directory ;
+	auto vShaderPath = shaderPath / vertexShaderFN;
+	auto fShaderPath = shaderPath / fragmentShaderFN;
+	std::string StringSShaderPath{ vShaderPath.u8string() };
+	std::string StringFShaderPath{ fShaderPath.u8string() };
+
+	GLuint programID = LoadShaders(StringSShaderPath.c_str(), StringFShaderPath.c_str());
+	return programID;
+}
+
+std::string_view GetAppPath()
+{
+	if (exePath[0] == 0)
+	{
+#ifdef WIN32
+		HMODULE exeModule = GetModuleHandleA(nullptr);
+		if (exeModule == nullptr)
+		{
+			std::cout << "exeModule has failed" << std::endl;
+		}
+		uint32_t length = GetModuleFileNameA(exeModule, exePath, MAX_PATH);
+
+		for (uint32_t i = 0; i < length; ++i)
+		{
+			if (exePath[i] == '\\')
+			{
+				exePath[i] = '/';
+			}
+		}
+		exePathView = std::string_view(exePath, length);
+#else
+		ssize_t len = ::readlink("/proc/self/exe", exePath, sizeof(exePath) - 1);
+		if (len != -1)
+		{
+			exePath[len] = '\0';
+			char* posBack = strrchr(exePath, '/');
+			exePathView = std::string_view(exePath, len);
+			chdir(exePathView.begin());
+		}
+#endif
+	}
+
+	return exePathView;
+}
 
 GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path) {
 	// Create the shaders

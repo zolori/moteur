@@ -49,3 +49,5 @@ target_include_directories(moteur PRIVATE
 	${ASSIMP_INCLUDE_DIR}
 )
 target_link_libraries(moteur PRIVATE SDL2-static SDL2main opengl32 glew assimp)
+
+set_property(TARGET moteur PROPERTY CXX_STANDARD 17)
