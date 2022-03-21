@@ -41,6 +41,8 @@ add_executable(moteur
 	AssimpImporter.cpp
 	VertexAssembly.h
 	VertexAssembly.cpp
+	Camera.h
+	Camera.cpp
 )
 
 target_include_directories(moteur PRIVATE
