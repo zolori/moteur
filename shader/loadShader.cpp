@@ -32,6 +32,7 @@ GLuint FindShaders(const char* directory, const char* vertexShaderFN, const char
 {
 	std::filesystem::path appPath(GetAppPath());
 	auto appDir = appPath.parent_path();
+	std::cout << appDir << std::endl;
 	auto shaderPath = appDir / directory ;
 	auto vShaderPath = shaderPath / vertexShaderFN;
 	auto fShaderPath = shaderPath / fragmentShaderFN;

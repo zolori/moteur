@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION 3.23)
+
+
 project(moteur)
 
 add_subdirectory(dep/SDL dep/SDL)
@@ -9,6 +12,10 @@ set(SDL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dep/SDL/include)
 set(GLM_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dep/glm)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_INCLUDE_DIR ${ASSIMP_ROOT}/include)
+
+add_custom_target(copy_shaders 
+COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shader $<TARGET_FILE_DIR:moteur>/shader)
+
 
 include(glew.cmake)
 
@@ -42,6 +49,8 @@ add_executable(moteur
 	VertexAssembly.h
 	VertexAssembly.cpp
 )
+
+add_dependencies(moteur copy_shaders)
 
 target_include_directories(moteur PRIVATE
 	${SDL_INCLUDE_DIR}
