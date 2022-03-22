@@ -1,7 +1,7 @@
 #pragma once
 #include "AssimpImporter.h"
-#include "Mesh.h"
-#include "VertexAssembly.h"
+#include "../../engineObjects/Components/Mesh.h"
+#include "../engineObjects/CoreClasses/VertexAssembly.h"
 
 const aiScene* DoTheImport(const char* pFile)
 {

@@ -17,37 +17,35 @@ add_custom_target(copy_shaders
 COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shader $<TARGET_FILE_DIR:moteur>/shader)
 
 
-include(glew.cmake)
+include(cmake/glew.cmake)
 
 add_executable(moteur
 	main.cpp 
-	projet.h 
-	gc_3d_defs.hpp
-	SimpleFragmentShader.fragmentshader
-	SimpleVertexShader.vertexshader
-	shader/loadShader.hpp
-	shader/loadShader.cpp
-	Buffer.h
-	Buffer.cpp
-	IndicesBuffer.h
-	IndicesBuffer.cpp
-	Component.h
-	Component.cpp
-	ComponentName.h
-	Object.h
-	Object.cpp
-	Transform.h
-	Transform.cpp
-	Mesh.h
-	Mesh.cpp
-	Texture.h
-	Texture.cpp
-	stb_image.h
-	Header.h
-	AssimpImporter.h
-	AssimpImporter.cpp
-	VertexAssembly.h
-	VertexAssembly.cpp
+	common/functions.hpp
+	common/functions.cpp
+	common/AssimpImporter.h
+	common/AssimpImporter.cpp
+	common/Header.h
+	common/stb_image.h
+	engineObjects/CoreClasses/Buffer.h
+	engineObjects/CoreClasses/Buffer.cpp
+	engineObjects/CoreClasses/IndicesBuffer.h
+	engineObjects/CoreClasses/IndicesBuffer.cpp
+	engineObjects/CoreClasses/VertexAssembly.h
+	engineObjects/CoreClasses/VertexAssembly.cpp
+	engineObjects/CoreClasses/Texture.h
+	engineObjects/CoreClasses/Texture.cpp
+	engineObjects/Component.h
+	engineObjects/Component.cpp
+	engineObjects/ComponentName.h
+	engineObjects/Object.h
+	engineObjects/Object.cpp
+	engineObjects/Components/Transform.h
+	engineObjects/Components/Transform.cpp
+	engineObjects/Components/Mesh.h
+	engineObjects/Components/Mesh.cpp
+	engineObjects/Components/Camera.h
+	engineObjects/Components/Camera.cpp
 )
 
 add_dependencies(moteur copy_shaders)

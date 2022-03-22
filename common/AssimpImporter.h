@@ -2,7 +2,7 @@
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include "Mesh.h"
+#include "../engineObjects/Components/Mesh.h"
 
 /**
 * Import the object in a scene
