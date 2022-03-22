@@ -28,7 +28,6 @@
 #include "dep/imgui/backends/imgui_impl_sdl.h"
 #include "dep/imgui/backends/imgui_impl_opengl3.h"
 
-#include <iostream>
 #include <ctime>
 #include <ratio>
 #include <chrono>
@@ -40,6 +39,18 @@
 #if WIN32
 #include <Windows.h>
 #endif
+
+#include "IndicesBuffer.h"
+#include "AssimpImporter.h"
+#include "shader/loadShader.hpp"
+#include "Camera.h"
+
+#define SDL_WIDTH 1024
+#define SDL_HEIGHT 728
+
+using namespace std;
+using namespace glm;
+using namespace GC_3D;
 
 namespace
 {
