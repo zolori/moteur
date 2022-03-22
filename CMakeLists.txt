@@ -61,6 +61,8 @@ add_executable(moteur
 	AssimpImporter.cpp
 	VertexAssembly.h
 	VertexAssembly.cpp
+	Camera.h
+	Camera.cpp
 )
 
 # add_custom_target(copy_shaders COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shaders $<TARGET_FILE_DIR:moteur>/shaders)

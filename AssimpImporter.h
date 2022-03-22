@@ -3,6 +3,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "Mesh.h"
+#include <vector>
 
 /**
 * Import the object in a scene
@@ -18,4 +19,4 @@ const aiScene* DoTheImport(const char* pFile);
 * @param scene The scene that you received after using DoTheImport
 * @return An instance of the Mesh class with all the attribute necessary to be drawed by OpenGL
 */
-Mesh* SceneProcessing(const aiScene* scene);
+std::vector<Mesh*> SceneProcessing(const aiScene* scene);

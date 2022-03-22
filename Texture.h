@@ -5,6 +5,8 @@ class Texture
 public:
 	//Constructor of the Texture class.
 	Texture();
+	//Constructor of the Texture class with parameters
+	Texture(int Width, int Height);
 	//Destructor of the Texture class.
 	~Texture();
 	/**
@@ -13,12 +15,12 @@ public:
 	*/
 	inline GLuint GetName() { return Texname; }
 	/**
-	* Getter for the imgWidth
+	* Getter for imgWidth
 	* @return Return an int
 	*/
 	inline int GetWidth() { return imgWidth; }
 	/**
-	* Getter for the imgHeight
+	* Getter for imgHeight
 	* @return Return an int
 	*/
 	inline int GetHeight() { return imgHeight; }
@@ -26,7 +28,7 @@ public:
 	* Load the image passed in the filepath bind it, and sets the parameter required to display the image correctly
 	* 
 	* @param filepath to the image you want to load
-	* @return retun true if the load was succesfull, else return false
+	* @return return true if the load was succesfull, else return false
 	*/
 	bool loadIMG(const char* filepath);
 	/**
