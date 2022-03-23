@@ -3,12 +3,18 @@ cmake_minimum_required(VERSION 3.23)
 
 project(moteur)
 
+include(bullet.cmake)
+
 add_subdirectory(dep/SDL dep/SDL)
+set(SDL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dep/SDL/include)
+
+set(IMGUI_USE_OGL3 true)
+include(cmake/imgui.cmake)
+
 
 set(ASSIMP_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/dep/assimp)
 add_subdirectory(${ASSIMP_ROOT} dep/assimp)
 
-set(SDL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dep/SDL/include)
 set(GLM_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dep/glm)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_INCLUDE_DIR ${ASSIMP_ROOT}/include)
@@ -59,7 +65,9 @@ target_include_directories(moteur PRIVATE
 	${SDL_INCLUDE_DIR}
 	${GLM_INCLUDE_DIR}
 	${ASSIMP_INCLUDE_DIR}
+	${IMGUI_INCLUDE_DIR}
+    ${BULLET_INCLUDE_DIR}
 )
-target_link_libraries(moteur PRIVATE SDL2-static SDL2main opengl32 glew assimp)
+target_link_libraries(moteur PRIVATE SDL2-static SDL2main opengl32 glew assimp imgui LinearMath BulletCollision BulletDynamics)
 
 set_property(TARGET moteur PROPERTY CXX_STANDARD 17)

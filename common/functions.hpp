@@ -22,3 +22,4 @@ std::string FindFile(const char* directory, const char* name);
 SDL_Window* SetUpWindow();
 std::string_view GetAppPath();
 GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
+ImGuiIO& initApp(SDL_Window* win);
