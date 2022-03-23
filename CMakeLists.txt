@@ -8,7 +8,7 @@ include(bullet.cmake)
 add_subdirectory(dep/SDL dep/SDL)
 set(SDL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dep/SDL/include)
 
-include(imgui.cmake)
+include(cmake/imgui.cmake)
 
 set(ASSIMP_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/dep/assimp)
 add_subdirectory(${ASSIMP_ROOT} dep/assimp)
