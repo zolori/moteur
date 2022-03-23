@@ -20,9 +20,6 @@ set(ASSIMP_INCLUDE_DIR ${ASSIMP_ROOT}/include)
 add_custom_target(copy_shaders 
 COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shader $<TARGET_FILE_DIR:moteur>/shader)
 
-add_custom_target(copy_assets
-COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:moteur>/assets)
-
 include(cmake/glew.cmake)
 
 add_executable(moteur
@@ -55,8 +52,6 @@ add_executable(moteur
 )
 
 add_dependencies(moteur copy_shaders)
-add_dependencies(moteur copy_assets)
-
 
 target_include_directories(moteur PRIVATE
     ${SDL_INCLUDE_DIR}
