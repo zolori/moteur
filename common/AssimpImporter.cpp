@@ -2,6 +2,7 @@
 #include "AssimpImporter.h"
 #include "../../engineObjects/Components/Mesh.h"
 #include "../engineObjects/CoreClasses/VertexAssembly.h"
+#include "functions.hpp"
 
 const aiScene* DoTheImport(const char* pFile)
 {
@@ -78,7 +79,8 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene)
         else
         {
             Texture* texture = new Texture();
-            texture->loadIMG("C:/Users/abouffay/Documents/GitHub/Bob_Blue.png");
+            std::string texure_path = FindFile("assets", "Bob_Blue.png");
+            texture->loadIMG(texure_path.c_str());
             TextureVector.push_back(texture);
         }
 
