@@ -1,20 +1,8 @@
-//Glew
-#include <GL/glew.h>
-
-//Miscellaneous
-#include <string>
+#include "functions.hpp"
+#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <cstdio>
-#ifdef _WIN32
-#include <windows.h>
-#endif
-#include <GL/glew.h>
-#include <SDL.h>
-#include <vector>
-#include "loadShader.hpp"
-#include <filesystem>
 
 
 namespace
@@ -28,11 +16,58 @@ namespace
 	std::string_view exePathView;
 }
 
+
+void initClear() {
+	glViewport(0, 0, 1024, 768);
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClearDepth(1.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LEQUAL);
+}
+
+inline float Seconds(Duration const& iDuration)
+{
+	return std::chrono::duration_cast<std::chrono::duration<float>>(iDuration).count();
+}
+
+
+float DeltaTime::GetDeltaTime()
+{
+	currentTime = Clock::now();
+	duration = currentTime - lastTime;
+	deltaTime = Seconds(duration);
+	lastTime = currentTime;
+	return deltaTime;
+}
+
+/*
+ImGuiIO& initApp(SDL_Window* win)
+{
+	SDL_GLContext context = SDL_GL_CreateContext(win);
+	SDL_GL_MakeCurrent(win, context);
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+
+	ImGui_ImplSDL2_InitForOpenGL(win, context);
+	ImGui_ImplOpenGL3_Init();
+
+	ImGui::StyleColorsDark();
+
+	return io;
+}*/
+
+
 GLuint FindShaders(const char* directory, const char* vertexShaderFN, const char* fragmentShaderFN)
 {
 	std::filesystem::path appPath(GetAppPath());
 	auto appDir = appPath.parent_path();
-	auto shaderPath = appDir / directory ;
+	std::cout << appDir << std::endl;
+	auto shaderPath = appDir / directory;
 	auto vShaderPath = shaderPath / vertexShaderFN;
 	auto fShaderPath = shaderPath / fragmentShaderFN;
 	std::string StringSShaderPath{ vShaderPath.u8string() };
