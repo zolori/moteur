@@ -7,6 +7,10 @@
 #define SDL_WIDTH 1024
 #define SDL_HEIGHT 728
 
+using namespace std;
+using namespace glm;
+
+
 SDL_Window* SetUpWindow()
 {
     SDL_Window* win;
@@ -38,27 +42,29 @@ int main(int argc, char* argv[])
     ImGuiIO& io = initApp(win);
     glewInit();
 
-    GLuint programID = FindShaders("shader","SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
+    std::string vertex_file_path = FindFile("shader", "SimpleVertexShader.vertexshader");
+    std::string  fragment_file_path = FindFile("shader", "SimpleFragmentShader.fragmentshader");
 
-    GLuint VertexArrayID;
-    glGenVertexArrays(1, &VertexArrayID);
-    glBindVertexArray(VertexArrayID);
-    
+    GLuint programID = LoadShaders(vertex_file_path.c_str(), fragment_file_path.c_str());
+
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
     std::vector<Mesh*> MeshesToBeDrawn;
-
-    const aiScene* scene = DoTheImport("C:/Users/abouffay/Documents/GitHub/Bob.fbx");
+    std::string mesh_path = FindFile("assets", "Bob.fbx");
+    const aiScene* scene = DoTheImport(mesh_path.c_str());
     if (scene != nullptr)
     {
         MeshesToBeDrawn = SceneProcessing(scene);
     }
+  
+
     //Camera Setup
     Camera cam = Camera(win);
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+
     int x, y;
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     struct DeltaTime Time;
     SDL_ShowCursor(SDL_DISABLE);
 
@@ -127,7 +133,6 @@ int main(int argc, char* argv[])
 
         glUseProgram(programID);
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &cam.GetMVP()[0][0]);
-
         for (size_t i = 0; i < MeshesToBeDrawn.size(); i++)
         {
             MeshesToBeDrawn[i]->Draw();
@@ -155,6 +160,6 @@ int main(int argc, char* argv[])
 
         SDL_GL_SwapWindow(win);
     }
-    delete scene;
+    //delete scene;
     return 0;
 }
