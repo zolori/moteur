@@ -1,7 +1,7 @@
 #pragma once
 #include "AssimpImporter.h"
-#include "Mesh.h"
-#include "VertexAssembly.h"
+#include "../../engineObjects/Components/Mesh.h"
+#include "../engineObjects/CoreClasses/VertexAssembly.h"
 
 const aiScene* DoTheImport(const char* pFile)
 {
@@ -9,8 +9,7 @@ const aiScene* DoTheImport(const char* pFile)
         aiProcess_CalcTangentSpace |
         aiProcess_Triangulate |
         aiProcess_JoinIdenticalVertices |
-        aiProcess_SortByPType |
-        aiProcess_FlipUVs);
+        aiProcess_SortByPType);
     //if the import failed, stop function
     if (nullptr != scene) 
     {

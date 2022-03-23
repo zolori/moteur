@@ -20,47 +20,38 @@ set(ASSIMP_INCLUDE_DIR ${ASSIMP_ROOT}/include)
 add_custom_target(copy_shaders 
 COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shader $<TARGET_FILE_DIR:moteur>/shader)
 
-
-include(glew.cmake)
+include(cmake/glew.cmake)
 
 add_executable(moteur
-    main.cpp 
-    projet.h 
-    gc_3d_defs.hpp
-    shader/loadShader.hpp
-    shader/loadShader.cpp
-    Buffer.h
-    Buffer.cpp
-    IndicesBuffer.h
-    IndicesBuffer.cpp
-    Component.h
-    Component.cpp
-    ComponentName.h
-    Object.h
-    Object.cpp
-    Transform.h
-    Transform.cpp
-    Mesh.h
-    Mesh.cpp
-    Texture.h
-    Texture.cpp
-    stb_image.h
-    Header.h
-    AssimpImporter.h
-    AssimpImporter.cpp
-    VertexAssembly.h
-    VertexAssembly.cpp
-    Quick.cpp
+	main.cpp 
+	common/functions.hpp
+	common/functions.cpp
+	common/AssimpImporter.h
+	common/AssimpImporter.cpp
+	common/Header.h
+	common/stb_image.h
+	engineObjects/CoreClasses/Buffer.h
+	engineObjects/CoreClasses/Buffer.cpp
+	engineObjects/CoreClasses/IndicesBuffer.h
+	engineObjects/CoreClasses/IndicesBuffer.cpp
+	engineObjects/CoreClasses/VertexAssembly.h
+	engineObjects/CoreClasses/VertexAssembly.cpp
+	engineObjects/CoreClasses/Texture.h
+	engineObjects/CoreClasses/Texture.cpp
+	engineObjects/Component.h
+	engineObjects/Component.cpp
+	engineObjects/ComponentName.h
+	engineObjects/Object.h
+	engineObjects/Object.cpp
+	engineObjects/Components/Transform.h
+	engineObjects/Components/Transform.cpp
+	engineObjects/Components/Mesh.h
+	engineObjects/Components/Mesh.cpp
+	engineObjects/Components/Camera.h
+	engineObjects/Components/Camera.cpp
 )
 
-
-# add_custom_target(copy_shaders COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shaders $<TARGET_FILE_DIR:moteur>/shaders)
-#add_custom_target(copy_ressources COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/../Ressources $<TARGET_FILE_DIR:moteur>/../Ressources)
-
-#add_dependencies(moteur copy_ressources)
-set_property(TARGET moteur PROPERTY CXX_STANDARD 17)
-
-#add_dependencies(moteur copy_shaders)
+add_dependencies(moteur copy_shaders)
 
 target_include_directories(moteur PRIVATE
     ${SDL_INCLUDE_DIR}

@@ -1,6 +1,6 @@
 #pragma once
-#include "Component.h"
-#include "Header.h"
+#include "../Component.h"
+#include "../../common/Header.h"
 class Transform : public Component
 {
 public:

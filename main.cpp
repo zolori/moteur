@@ -1,17 +1,8 @@
-#include "projet.h"
-
-int main(int argc, char* argv[]) {
-
-    //jour1(argc, argv);
-    //jour2(argc, argv);
-    //jour3(argc, argv);
-    //jour4(argc, argv);
-    //jour5(argc, argv);
-    //cubeTexture();
-    loadModel();
-
-    return 0;
-}
+#include "common/AssimpImporter.h"
+#include <iostream>
+#include "engineObjects/Components/Camera.h"
+#include "common/functions.hpp"
+#include "common/Header.h"
 
 struct DeltaTime {
     Timestamp currentTime;
@@ -53,7 +44,6 @@ SDL_Window* SetUpWindow()
     return win;
 }
 
-#if 0
 int main(int argc, char* argv[])
 {   
     SDL_Window* win = SetUpWindow();

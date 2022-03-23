@@ -1,8 +1,8 @@
 #pragma once
-#include "Component.h"
-#include "Texture.h"
-#include "VertexAssembly.h"
-#include "IndicesBuffer.h"
+#include "../Component.h"
+#include "../CoreClasses/Texture.h"
+#include "../CoreClasses/VertexAssembly.h"
+#include "../CoreClasses/IndicesBuffer.h"
 
 #include <vector>
 class Mesh : public Component
