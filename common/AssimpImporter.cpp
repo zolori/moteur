@@ -9,8 +9,7 @@ const aiScene* DoTheImport(const char* pFile)
         aiProcess_CalcTangentSpace |
         aiProcess_Triangulate |
         aiProcess_JoinIdenticalVertices |
-        aiProcess_SortByPType |
-        aiProcess_FlipUVs);
+        aiProcess_SortByPType);
     //if the import failed, stop function
     if (nullptr != scene) 
     {
