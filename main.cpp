@@ -4,22 +4,8 @@
 #include "common/functions.hpp"
 #include "common/Header.h"
 
-struct DeltaTime {
-    Timestamp currentTime;
-    Timestamp lastTime;
-    float deltaTime;
-    Duration duration;
-    float GetDeltaTime();
-};
-
-float DeltaTime::GetDeltaTime()
-{
-    currentTime = Clock::now();
-    duration = currentTime - lastTime;
-    deltaTime = Seconds(duration);
-    lastTime = currentTime;
-    return deltaTime;
-}
+#define SDL_WIDTH 1024
+#define SDL_HEIGHT 728
 
 SDL_Window* SetUpWindow()
 {
@@ -49,6 +35,7 @@ int main(int argc, char* argv[])
     SDL_Window* win = SetUpWindow();
     SDL_bool apprunning = SDL_TRUE;
 
+    ImGuiIO& io = initApp(win);
     glewInit();
 
     GLuint programID = FindShaders("shader","SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
@@ -75,6 +62,8 @@ int main(int argc, char* argv[])
     struct DeltaTime Time;
     SDL_ShowCursor(SDL_DISABLE);
 
+    auto beginTime = steady_clock::now();
+    auto prevTime = steady_clock::now();
 
     while (apprunning)
     {
@@ -83,6 +72,7 @@ int main(int argc, char* argv[])
         SDL_Event curEvent;
         while (SDL_PollEvent(&curEvent))
         {
+            ImGui_ImplSDL2_ProcessEvent(&curEvent);
             switch(curEvent.type)
             {
                 case SDL_KEYDOWN:
@@ -142,9 +132,29 @@ int main(int argc, char* argv[])
         {
             MeshesToBeDrawn[i]->Draw();
         }
+
+        //Render Loop
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL2_NewFrame(win);
+
+        ImGui::NewFrame();
+
+        // Draw some widgets
+
+        auto curTime = steady_clock::now();
+        duration<float> elapsedSeconds = curTime - prevTime;
+
+        ImGui::Begin("Perfs");
+        ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
+        ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
+        ImGui::End();
+
+        //Rendering end
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         SDL_GL_SwapWindow(win);
     }
     delete scene;
     return 0;
 }
-#endif

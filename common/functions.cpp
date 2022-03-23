@@ -42,7 +42,7 @@ float DeltaTime::GetDeltaTime()
 	return deltaTime;
 }
 
-/*
+
 ImGuiIO& initApp(SDL_Window* win)
 {
 	SDL_GLContext context = SDL_GL_CreateContext(win);
@@ -59,7 +59,7 @@ ImGuiIO& initApp(SDL_Window* win)
 	ImGui::StyleColorsDark();
 
 	return io;
-}*/
+}
 
 
 GLuint FindShaders(const char* directory, const char* vertexShaderFN, const char* fragmentShaderFN)
