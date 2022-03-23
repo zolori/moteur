@@ -9,7 +9,8 @@ const aiScene* DoTheImport(const char* pFile)
         aiProcess_CalcTangentSpace |
         aiProcess_Triangulate |
         aiProcess_JoinIdenticalVertices |
-        aiProcess_SortByPType);
+        aiProcess_SortByPType |
+        aiProcess_FlipUVs);
     //if the import failed, stop function
     if (nullptr != scene) 
     {
@@ -58,6 +59,7 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene)
         VertexAssembly* MeshVertices = new VertexAssembly(Pos,
                                                           Norm,
                                                           TexCoords);
+
         std::vector<unsigned int> Indices;
         for (size_t j = 0; j < scene->mMeshes[i]->mNumFaces; j++)
         {
