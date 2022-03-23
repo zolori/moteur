@@ -7,6 +7,10 @@
 #define SDL_WIDTH 1024
 #define SDL_HEIGHT 728
 
+using namespace std;
+using namespace glm;
+
+
 SDL_Window* SetUpWindow()
 {
     SDL_Window* win;
@@ -35,10 +39,12 @@ int main(int argc, char* argv[])
     SDL_Window* win = SetUpWindow();
     SDL_bool apprunning = SDL_TRUE;
 
-    ImGuiIO& io = initApp(win);
     glewInit();
 
-    GLuint programID = FindShaders("shader","SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
+    std::string vertex_file_path = FindFile("shader", "SimpleVertexShader.vertexshader");
+    std::string  fragment_file_path = FindFile("shader", "SimpleFragmentShader.fragmentshader");
+
+    GLuint programID = LoadShaders(vertex_file_path.c_str(), fragment_file_path.c_str());
 
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
@@ -48,22 +54,23 @@ int main(int argc, char* argv[])
     glDepthFunc(GL_LESS);
 
     std::vector<Mesh*> MeshesToBeDrawn;
-
-    const aiScene* scene = DoTheImport("C:/Users/abouffay/Documents/GitHub/Bob.fbx");
+    std::string mesh_path = FindFile("assets", "Bob.fbx");
+    const aiScene* scene = DoTheImport(mesh_path.c_str());
     if (scene != nullptr)
     {
         MeshesToBeDrawn = SceneProcessing(scene);
     }
+  
+
     //Camera Setup
     Camera cam = Camera(win);
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+
     int x, y;
     glEnable(GL_CULL_FACE);
     struct DeltaTime Time;
     SDL_ShowCursor(SDL_DISABLE);
 
-    auto beginTime = steady_clock::now();
-    auto prevTime = steady_clock::now();
 
     while (apprunning)
     {
@@ -72,7 +79,6 @@ int main(int argc, char* argv[])
         SDL_Event curEvent;
         while (SDL_PollEvent(&curEvent))
         {
-            ImGui_ImplSDL2_ProcessEvent(&curEvent);
             switch(curEvent.type)
             {
                 case SDL_KEYDOWN:
@@ -132,27 +138,6 @@ int main(int argc, char* argv[])
         {
             MeshesToBeDrawn[i]->Draw();
         }
-
-        //Render Loop
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame(win);
-
-        ImGui::NewFrame();
-
-        // Draw some widgets
-
-        auto curTime = steady_clock::now();
-        duration<float> elapsedSeconds = curTime - prevTime;
-
-        ImGui::Begin("Perfs");
-        ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
-        ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
-        ImGui::End();
-
-        //Rendering end
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
         SDL_GL_SwapWindow(win);
     }
     delete scene;

@@ -19,9 +19,3 @@
 //Miscellaneous
 #include <vector>
 #include <chrono>
-using namespace std::chrono;
-
-//Imgui
-#include "imgui.h"
-#include "backends/imgui_impl_sdl.h"
-#include "backends/imgui_impl_opengl3.h"

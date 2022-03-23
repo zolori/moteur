@@ -1,8 +1,9 @@
 #include "functions.hpp"
-#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
+std::filesystem::path appDir;
 
 
 namespace
@@ -42,7 +43,7 @@ float DeltaTime::GetDeltaTime()
 	return deltaTime;
 }
 
-
+/*
 ImGuiIO& initApp(SDL_Window* win)
 {
 	SDL_GLContext context = SDL_GL_CreateContext(win);
@@ -59,22 +60,19 @@ ImGuiIO& initApp(SDL_Window* win)
 	ImGui::StyleColorsDark();
 
 	return io;
-}
+}*/
 
-
-GLuint FindShaders(const char* directory, const char* vertexShaderFN, const char* fragmentShaderFN)
+std::string FindFile(const char* directory, const char* name)
 {
-	std::filesystem::path appPath(GetAppPath());
-	auto appDir = appPath.parent_path();
-	std::cout << appDir << std::endl;
-	auto shaderPath = appDir / directory;
-	auto vShaderPath = shaderPath / vertexShaderFN;
-	auto fShaderPath = shaderPath / fragmentShaderFN;
-	std::string StringSShaderPath{ vShaderPath.u8string() };
-	std::string StringFShaderPath{ fShaderPath.u8string() };
-
-	GLuint programID = LoadShaders(StringSShaderPath.c_str(), StringFShaderPath.c_str());
-	return programID;
+	if (appDir.empty())
+	{
+		std::filesystem::path appPath(GetAppPath());
+		appDir = appPath.parent_path();
+	}
+	auto fileDirectory = appDir/ directory;
+	auto filePath = fileDirectory /   name;
+	std::string StringSShaderPath{ filePath.u8string() };
+	return StringSShaderPath;
 }
 
 std::string_view GetAppPath()
