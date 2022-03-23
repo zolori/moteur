@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(VertexAssembly* Vertices, std::vector<unsigned int> Indices, std::vector<Texture> Textures)
+Mesh::Mesh(VertexAssembly* Vertices, std::vector<unsigned int> Indices, std::vector<Texture*> Textures)
 {
 	vertices = Vertices;
 	indices = Indices;
@@ -24,6 +24,11 @@ Mesh::~Mesh()
 
 void Mesh::Draw()
 {
+
+	for (size_t i = 0; i < textures.size(); i++)
+	{
+		textures[i]->useIMG(i);
+	}
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }
@@ -35,11 +40,11 @@ void Mesh::setupMesh()
 
 	PosBuffer = new Buffer(vertices->GetPosition(), 0, 3, GL_ARRAY_BUFFER);
 	NormBuffer = new Buffer(vertices->GetNormal(), 1, 3, GL_ARRAY_BUFFER);
-	//TexcoordBuffer = new Buffer(vertices->GetTexCoords(), 2, 2, GL_ELEMENT_ARRAY_BUFFER);
+	TexcoordBuffer = new Buffer(vertices->GetTexCoords(), 2, 2, GL_ARRAY_BUFFER);
 
 	PosBuffer->BindBuffer();
 	NormBuffer->BindBuffer();
-	//TexcoordBuffer->BindBuffer();
+	TexcoordBuffer->BindBuffer();
 
 	IndiceBuffer = new IndicesBuffer(indices, GL_ELEMENT_ARRAY_BUFFER);
 }

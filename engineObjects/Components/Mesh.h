@@ -18,7 +18,7 @@ public:
 	* @param A vector filled with instances of the Texture class containing the mesh textures.
 	* By default empty
 	*/
-	Mesh(VertexAssembly* Vertices, std::vector<unsigned int> Indices, std::vector<Texture> Textures = std::vector<Texture>());
+	Mesh(VertexAssembly* Vertices, std::vector<unsigned int> Indices, std::vector<Texture*> Textures = std::vector<Texture*>());
 	//Destructor of the Mesh class
 	~Mesh();
 	/**
@@ -29,7 +29,7 @@ public:
 
 	VertexAssembly* vertices;
 	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
+	std::vector<Texture*> textures;
 
 	//Pure virtual method of Component overriden
 	inline void f() override { printf("virtual function overriden"); }

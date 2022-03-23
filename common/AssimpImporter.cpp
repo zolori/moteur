@@ -9,7 +9,8 @@ const aiScene* DoTheImport(const char* pFile)
         aiProcess_CalcTangentSpace |
         aiProcess_Triangulate |
         aiProcess_JoinIdenticalVertices |
-        aiProcess_SortByPType);
+        aiProcess_SortByPType |
+        aiProcess_FlipUVs);
     //if the import failed, stop function
     if (nullptr != scene) 
     {
@@ -21,11 +22,12 @@ const aiScene* DoTheImport(const char* pFile)
     }
 }
 
-Mesh* SceneProcessing(aiScene const* scene)
+std::vector<Mesh*> SceneProcessing(aiScene const* scene)
 {
-    Mesh* DrawnMesh;
+    std::vector<Mesh*> MeshesToDraw;
     for (size_t i = 0; i < scene->mNumMeshes; i++)
     {
+        Mesh* MeshToDraw;
         std::vector<GLfloat> Pos;
         for (size_t j = 0; j < scene->mMeshes[i]->mNumVertices; j++)
         {
@@ -47,9 +49,13 @@ Mesh* SceneProcessing(aiScene const* scene)
         std::vector<GLfloat> TexCoords;
         if (scene->mMeshes[i]->HasTextureCoords(0))
         {
-            TexCoords.push_back(scene->mMeshes[i]->mTextureCoords[0]->x);
-            TexCoords.push_back(scene->mMeshes[i]->mTextureCoords[0]->y);
+            for (size_t j = 0; j < scene->mMeshes[i]->mNumVertices; j++)
+            {
+                TexCoords.push_back(scene->mMeshes[i]->mTextureCoords[0][j].x);
+                TexCoords.push_back(scene->mMeshes[i]->mTextureCoords[0][j].y);
+            }
         }
+
         VertexAssembly* MeshVertices = new VertexAssembly(Pos,
                                                           Norm,
                                                           TexCoords);
@@ -61,9 +67,26 @@ Mesh* SceneProcessing(aiScene const* scene)
                 Indices.push_back(scene->mMeshes[i]->mFaces[j].mIndices[g]);
             }
         }
-        DrawnMesh = new Mesh(MeshVertices, Indices);
+        std::vector<Texture*> TextureVector;
+        if (scene->HasTextures())
+        {
+            for (size_t j = 0; j < scene->mNumTextures; j++)
+            {
+                Texture* texture = new Texture(scene->mTextures[i]->mWidth, scene->mTextures[i]->mHeight);
+                TextureVector.push_back(texture);
+            }
+        }
+        else
+        {
+            Texture* texture = new Texture();
+            texture->loadIMG("C:/Users/abouffay/Documents/GitHub/Bob_Blue.png");
+            TextureVector.push_back(texture);
+        }
+
+        MeshToDraw = new Mesh(MeshVertices, Indices, TextureVector);
+        MeshesToDraw.push_back(MeshToDraw);
     }
-    return DrawnMesh;
+    return MeshesToDraw;
 }
 
 
