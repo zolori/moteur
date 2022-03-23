@@ -1,13 +1,12 @@
 #include "Buffer.h"
 
-Buffer::Buffer(std::vector<GLfloat> const &BufferData, GLsizei Location, GLint Size, GLenum BufferType)
+Buffer::Buffer(std::vector<GLfloat> const &BufferData, GLsizei Location, GLint Size)
 {
 	location = Location;
 	size = Size;
-	bufferType = BufferType;
 	glGenBuffers(1, &bufferIdentifier);
-	glBindBuffer(bufferType, bufferIdentifier);
-	glBufferData(bufferType, BufferData.size() * sizeof(GLfloat), BufferData.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, bufferIdentifier);
+	glBufferData(GL_ARRAY_BUFFER, BufferData.size() * sizeof(GLfloat), BufferData.data(), GL_STATIC_DRAW);
 }
 
 Buffer::~Buffer()
@@ -19,7 +18,7 @@ Buffer::~Buffer()
 void Buffer::BindBuffer()
 {
 	glEnableVertexAttribArray(location);
-	glBindBuffer(bufferType, bufferIdentifier);
+	glBindBuffer(GL_ARRAY_BUFFER, bufferIdentifier);
 	glVertexAttribPointer(
 		location,
 		size,

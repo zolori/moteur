@@ -38,13 +38,13 @@ void Mesh::setupMesh()
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	PosBuffer = new Buffer(vertices->GetPosition(), 0, 3, GL_ARRAY_BUFFER);
-	NormBuffer = new Buffer(vertices->GetNormal(), 1, 3, GL_ARRAY_BUFFER);
-	TexcoordBuffer = new Buffer(vertices->GetTexCoords(), 2, 2, GL_ARRAY_BUFFER);
+	PosBuffer = new Buffer(vertices->GetPosition(), 0, 3);
+	NormBuffer = new Buffer(vertices->GetNormal(), 1, 3);
+	TexcoordBuffer = new Buffer(vertices->GetTexCoords(), 2, 2);
 
 	PosBuffer->BindBuffer();
 	NormBuffer->BindBuffer();
 	TexcoordBuffer->BindBuffer();
 
-	IndiceBuffer = new IndicesBuffer(indices, GL_ELEMENT_ARRAY_BUFFER);
+	IndiceBuffer = new IndicesBuffer(indices);
 }

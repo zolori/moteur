@@ -1,9 +1,8 @@
 #include "IndicesBuffer.h"
 
-IndicesBuffer::IndicesBuffer(std::vector<unsigned int> const& BufferData, GLenum BufferType)
+IndicesBuffer::IndicesBuffer(std::vector<unsigned int> const& BufferData)
 {
-	bufferType = BufferType;
 	glGenBuffers(1, &bufferIdentifier);
-	glBindBuffer(bufferType, bufferIdentifier);
-	glBufferData(bufferType, BufferData.size() * sizeof(unsigned int), BufferData.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIdentifier);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, BufferData.size() * sizeof(unsigned int), BufferData.data(), GL_STATIC_DRAW);
 }
