@@ -2,10 +2,13 @@
 #include <string_view>
 #include <chrono>
 #include "Header.h"
+#include <filesystem>
 
 using Clock = std::chrono::high_resolution_clock;
 using Timestamp = Clock::time_point;
 using Duration = Clock::duration;
+
+//std::filesystem::path appPath;
 
 struct DeltaTime {
     Timestamp currentTime;
@@ -15,8 +18,7 @@ struct DeltaTime {
     float GetDeltaTime();
 };
 
+std::string FindFile(const char* directory, const char* name);
 SDL_Window* SetUpWindow();
-
-GLuint FindShaders(const char* directory, const char* vertexShaderFN, const char* fragmentShaderFN);
 std::string_view GetAppPath();
 GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
