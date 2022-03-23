@@ -1,7 +1,7 @@
 #include "projet.h"
 
 int main(int argc, char* argv[]) {
-	
+
     //jour1(argc, argv);
     //jour2(argc, argv);
     //jour3(argc, argv);
@@ -10,7 +10,25 @@ int main(int argc, char* argv[]) {
     //cubeTexture();
     loadModel();
 
-	return 0;
+    return 0;
+}
+
+struct DeltaTime {
+    Timestamp currentTime;
+    Timestamp lastTime;
+    float deltaTime;
+    Duration duration;
+    float GetDeltaTime();
+};
+
+float DeltaTime::GetDeltaTime()
+{
+    currentTime = Clock::now();
+    duration = currentTime - lastTime;
+    deltaTime = Seconds(duration);
+    lastTime = currentTime;
+    return deltaTime;
+}
 
 SDL_Window* SetUpWindow()
 {
@@ -35,24 +53,7 @@ SDL_Window* SetUpWindow()
     return win;
 }
 
-
-struct DeltaTime {
-    Timestamp currentTime;
-    Timestamp lastTime;
-    float deltaTime;
-    Duration duration;
-    float GetDeltaTime();
-};
-
-float DeltaTime::GetDeltaTime()
-{
-    currentTime = Clock::now();
-    duration = currentTime - lastTime;
-    deltaTime = Seconds(duration);
-    lastTime = currentTime;
-    return deltaTime;
-}
-
+#if 0
 int main(int argc, char* argv[])
 {   
     SDL_Window* win = SetUpWindow();
@@ -156,3 +157,4 @@ int main(int argc, char* argv[])
     delete scene;
     return 0;
 }
+#endif

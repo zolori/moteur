@@ -1,9 +1,12 @@
 #include "Object.h"
+#include <BulletCollision/CollisionDispatch/btCollisionObject.h>
 
 Object::Object(std::string Name, std::string Tag)
 {
 	name = Name;
 	tag = Tag;
+
+	btCollisionObject testObj;
 }
 
 void Object::RemoveComponent(ComponentName ComponentName)
