@@ -1,5 +1,5 @@
 #pragma once
-#include "Component.h"
+#include "../Component.h"
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -68,11 +68,9 @@ public:
 	void SetProjection();
 	void SetView();
 	void SetMVP();
-	//void SetMatrixID(GLuint ProgID);
 	//Getters
 	vec3 GetPosition();
 	vec3 GetRight();
 	vec3 GetFront();
 	mat4 GetMVP();
-	//GLuint GetMatrixID();
 };

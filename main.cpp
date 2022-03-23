@@ -1,16 +1,14 @@
-#include "IndicesBuffer.h"
-#include "AssimpImporter.h"
-#include "shader/loadShader.hpp"
+#include "common/AssimpImporter.h"
 #include <iostream>
-#include "gc_3d_defs.hpp"
-#include "Camera.h"
+#include "engineObjects/Components/Camera.h"
+#include "common/functions.hpp"
+#include "common/Header.h"
 
 #define SDL_WIDTH 1024
 #define SDL_HEIGHT 728
 
 using namespace std;
 using namespace glm;
-using namespace GC_3D;
 
 
 SDL_Window* SetUpWindow()
@@ -34,24 +32,6 @@ SDL_Window* SetUpWindow()
     SDL_GL_MakeCurrent(win, context);
     glewInit();
     return win;
-}
-
-
-struct DeltaTime {
-    Timestamp currentTime;
-    Timestamp lastTime;
-    float deltaTime;
-    Duration duration;
-    float GetDeltaTime();
-};
-
-float DeltaTime::GetDeltaTime()
-{
-    currentTime = Clock::now();
-    duration = currentTime - lastTime;
-    deltaTime = Seconds(duration);
-    lastTime = currentTime;
-    return deltaTime;
 }
 
 int main(int argc, char* argv[])
