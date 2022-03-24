@@ -16,7 +16,8 @@ const aiScene* DoTheImport(const char* pFile);
 /**
 * Process the scene while creating instance of the Mesh class
 * 
-* @param scene The scene that you received after using DoTheImport
-* @return An instance of the Mesh class with all the attribute necessary to be drawed by OpenGL
+* @param scene The scene that you received after using DoTheImport.
+* @param textureFile The textureFile name, can be left empty if no texture exist.
+* @return An instance of the Mesh class with all the attribute necessary to be drawn by OpenGL
 */
-std::vector<Mesh*> SceneProcessing(const aiScene* scene);
+std::vector<Mesh*> SceneProcessing(const aiScene* scene, const char* textureFile = nullptr);

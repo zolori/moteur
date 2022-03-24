@@ -23,7 +23,7 @@ const aiScene* DoTheImport(const char* pFile)
     }
 }
 
-std::vector<Mesh*> SceneProcessing(aiScene const* scene)
+std::vector<Mesh*> SceneProcessing(aiScene const* scene, const char* textureFile)
 {
     std::vector<Mesh*> MeshesToDraw;
     for (size_t i = 0; i < scene->mNumMeshes; i++)
@@ -80,10 +80,13 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene)
         }
         else
         {
-            Texture* texture = new Texture();
-            std::string texure_path = FindFile("assets", "Bob_Blue.png");
-            texture->loadIMG(texure_path.c_str());
-            TextureVector.push_back(texture);
+            if (textureFile != nullptr)
+            {
+                Texture* texture = new Texture();
+                std::string texure_path = FindFile("assets", textureFile);
+                texture->loadIMG(texure_path.c_str());
+                TextureVector.push_back(texture);
+            }
         }
 
         MeshToDraw = new Mesh(MeshVertices, Indices, TextureVector);
