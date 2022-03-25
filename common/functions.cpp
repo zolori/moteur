@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <imgui.cpp>
 
 std::filesystem::path appDir;
 
@@ -53,7 +54,7 @@ ImGuiIO& initApp(SDL_Window* win)
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-
+	io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
 	ImGui_ImplSDL2_InitForOpenGL(win, context);
 	ImGui_ImplOpenGL3_Init();
 
