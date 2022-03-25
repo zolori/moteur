@@ -66,15 +66,17 @@ int main(int argc, char* argv[])
     int x, y;
     //glEnable(GL_CULL_FACE);
     struct DeltaTime Time;
-    SDL_ShowCursor(SDL_DISABLE);
+    //SDL_ShowCursor(SDL_DISABLE);
 
     auto beginTime = steady_clock::now();
     auto prevTime = steady_clock::now();
 
+    bool Freelook = true;
+
     while (apprunning)
     {
         float deltaTime = Time.GetDeltaTime();
-
+        
         SDL_Event curEvent;
         while (SDL_PollEvent(&curEvent))
         {
@@ -102,15 +104,33 @@ int main(int argc, char* argv[])
                             break;
                         case SDLK_ESCAPE:
                             apprunning = SDL_FALSE;
+                            break;
+
+                        case SDLK_LCTRL:
+                            Freelook = false;
+                            break;
+
                         default:
                             break;
                     }
                     break;
+                case SDL_KEYUP:
+                    switch (curEvent.key.keysym.sym)
+                    {
+                        case SDLK_LCTRL:
+                            Freelook = true;
+                        break;
+                    }
+                    break;
 
                 case SDL_MOUSEMOTION:
-                    x = curEvent.motion.xrel;
-                    y = curEvent.motion.yrel;
-                    cam.CameraInputMouse(x, y, deltaTime);
+                    if (Freelook)
+                    {
+                        x = curEvent.motion.xrel;
+                        y = curEvent.motion.yrel;
+                        //printf("mouse position \n x : %d\n y: %d\n", x, y);
+                        cam.CameraInputMouse(x, y, deltaTime);
+                    }
                     break;
 
                 case SDL_MOUSEWHEEL:
@@ -125,8 +145,13 @@ int main(int argc, char* argv[])
                     break;
             }
         }
+        SDL_ShowCursor(!Freelook);
 
-        cam.ResetMousePosition();
+        if (Freelook)
+        {
+            cam.ResetMousePosition();
+        }
+
         glClearColor(0.0, 0.0, 0.4f, 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
@@ -141,9 +166,8 @@ int main(int argc, char* argv[])
         //Render Loop
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame(win);
-
+        
         ImGui::NewFrame();
-
         // Draw some widgets
 
         auto curTime = steady_clock::now();
