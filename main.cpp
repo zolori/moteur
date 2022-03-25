@@ -178,6 +178,8 @@ int main(int argc, char* argv[])
         ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
         ImGui::End();
 
+        prevTime = curTime;
+
         //Rendering end
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
