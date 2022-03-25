@@ -23,7 +23,7 @@ const aiScene* DoTheImport(const char* pFile)
     }
 }
 
-std::vector<Mesh*> SceneProcessing(aiScene const* scene)
+std::vector<Mesh*> SceneProcessing(aiScene const* scene, const char* textureFile)
 {
     std::vector<Mesh*> MeshesToDraw;
     for (size_t i = 0; i < scene->mNumMeshes; i++)
@@ -56,10 +56,26 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene)
                 TexCoords.push_back(scene->mMeshes[i]->mTextureCoords[0][j].y);
             }
         }
-
+        if (scene->HasMaterials())
+        {
+        }
+        std::vector<GLfloat> Color;
+        if (scene->mMeshes[i]->HasVertexColors(0))
+        {
+            for (size_t j = 0; j < scene->mMeshes[i]->mNumVertices; j++)
+            {
+                Color.push_back(scene->mMeshes[i]->mColors[0][j].r);
+                Color.push_back(scene->mMeshes[i]->mColors[0][j].g);
+                Color.push_back(scene->mMeshes[i]->mColors[0][j].b);
+                printf("Red: %f\n", scene->mMeshes[i]->mColors[0][j].r);
+                printf("Green: %f\n", scene->mMeshes[i]->mColors[0][j].g);
+                printf("Blue: %f\n", scene->mMeshes[i]->mColors[0][j].b);
+            }
+        }
         VertexAssembly* MeshVertices = new VertexAssembly(Pos,
                                                           Norm,
-                                                          TexCoords);
+                                                          TexCoords,
+                                                          Color);
 
         std::vector<unsigned int> Indices;
         for (size_t j = 0; j < scene->mMeshes[i]->mNumFaces; j++)
@@ -80,10 +96,13 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene)
         }
         else
         {
-            Texture* texture = new Texture();
-            std::string texure_path = FindFile("assets", "Bob_Blue.png");
-            texture->loadIMG(texure_path.c_str());
-            TextureVector.push_back(texture);
+            if (textureFile != nullptr)
+            {
+                Texture* texture = new Texture();
+                std::string texure_path = FindFile("assets", textureFile);
+                texture->loadIMG(texure_path.c_str());
+                TextureVector.push_back(texture);
+            }
         }
 
         MeshToDraw = new Mesh(MeshVertices, Indices, TextureVector);

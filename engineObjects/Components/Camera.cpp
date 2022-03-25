@@ -13,7 +13,7 @@ Camera::Camera(SDL_Window* NewWin)
     Up = glm::vec3(0, 1, 0);
     Model = glm::mat4(1.0f);
     win = NewWin;
-    SetProjectionParameters(45.0f, 1024, 728, 0.1f, 100.0f);
+    SetProjectionParameters(45.0f, 1024, 728, 0.1f, 500.0f);
 }
 
 void Camera::f()

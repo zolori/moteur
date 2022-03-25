@@ -6,6 +6,7 @@ in vec3 Position_worldspace;
 in vec3 Normal_cameraspace;
 in vec3 EyeDirection_cameraspace;
 in vec3 LightDirection_cameraspace;
+in vec3 fragmentColor;
 
 // Ouput data
 out vec3 color;
@@ -24,8 +25,8 @@ void main(){
 	
 	// Material properties
 	vec3 MaterialDiffuseColor = texture( myTextureSampler, UV ).rgb;
-	color = 
-		MaterialDiffuseColor;
+	color = fragmentColor;
+		//MaterialDiffuseColor;
 		return;
 	#if 0
 
