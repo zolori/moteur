@@ -41,15 +41,16 @@ int main(int argc, char* argv[])
 
     ImGuiIO& io = initApp(win);
     glewInit();
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
+    //Shader Setup
     std::string vertex_file_path = FindFile("shader", "SimpleVertexShader.vertexshader");
     std::string  fragment_file_path = FindFile("shader", "SimpleFragmentShader.fragmentshader");
 
     GLuint programID = LoadShaders(vertex_file_path.c_str(), fragment_file_path.c_str());
 
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
+    //Mesh To Draw Setup
     std::vector<Mesh*> MeshesToBeDrawn;
     std::string mesh_path = FindFile("assets", "Bob.fbx");
     const aiScene* scene = DoTheImport(mesh_path.c_str());
@@ -57,24 +58,32 @@ int main(int argc, char* argv[])
     {
         MeshesToBeDrawn = SceneProcessing(scene);
     }
-  
 
     //Camera Setup
     Camera cam = Camera(win);
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-
     int x, y;
-    //glEnable(GL_CULL_FACE);
-    struct DeltaTime Time;
-    //SDL_ShowCursor(SDL_DISABLE);
+    bool Freelook = true;
 
+    glEnable(GL_CULL_FACE);
+    //DeltaTime Setup
+    struct DeltaTime Time;
     auto beginTime = steady_clock::now();
     auto prevTime = steady_clock::now();
 
-    bool Freelook = true;
+    //Light Setup
+    std::string texture_path = FindFile("assets", "Bob_Blue.png");
+    GLuint Texture = loadDDS(texture_path.c_str());
+    GLuint TextureID = glGetUniformLocation(programID, "myTextureSampler");
+    GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
+    GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
+    GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 
     while (apprunning)
     {
+        glClearColor(0.0, 0.0, 0.4f, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         float deltaTime = Time.GetDeltaTime();
         
         SDL_Event curEvent;
@@ -128,7 +137,6 @@ int main(int argc, char* argv[])
                     {
                         x = curEvent.motion.xrel;
                         y = curEvent.motion.yrel;
-                        //printf("mouse position \n x : %d\n y: %d\n", x, y);
                         cam.CameraInputMouse(x, y, deltaTime);
                     }
                     break;
@@ -152,12 +160,18 @@ int main(int argc, char* argv[])
             cam.ResetMousePosition();
         }
 
-        glClearColor(0.0, 0.0, 0.4f, 0.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-
         glUseProgram(programID);
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &cam.GetMVP()[0][0]);
+        glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &cam.GetModel()[0][0]);
+        glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &cam.GetView()[0][0]);
+     
+        glm::vec3 lightPos = glm::vec3(1, 5, 2);
+        glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, Texture);
+        glUniform1i(TextureID, 0);
+
         for (size_t i = 0; i < MeshesToBeDrawn.size(); i++)
         {
             MeshesToBeDrawn[i]->Draw();

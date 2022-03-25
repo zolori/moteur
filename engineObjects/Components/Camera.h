@@ -73,4 +73,6 @@ public:
 	vec3 GetRight();
 	vec3 GetFront();
 	mat4 GetMVP();
+	mat4 GetModel();
+	mat4 GetView();
 };
