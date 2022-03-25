@@ -41,6 +41,7 @@ private:
 	Buffer* PosBuffer;
 	Buffer* NormBuffer;
 	Buffer* TexcoordBuffer;
+	Buffer* ColorBuffer;
 	IndicesBuffer* IndiceBuffer;
 	/**
 	* Setup the VAO buffer as well as the Position, Normal, TextureCoordinate and Indice buffer

@@ -49,9 +49,10 @@ int main(int argc, char* argv[])
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     std::vector<Mesh*> MeshesToBeDrawn;
-    std::string mesh_path = FindFile("assets", "Bob.fbx");
+    std::string mesh_path = FindFile("assets", "Pool.fbx");
     const aiScene* scene = DoTheImport(mesh_path.c_str());
     if (scene != nullptr)
     {

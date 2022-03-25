@@ -56,10 +56,26 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene, const char* textureFile
                 TexCoords.push_back(scene->mMeshes[i]->mTextureCoords[0][j].y);
             }
         }
-
+        if (scene->HasMaterials())
+        {
+        }
+        std::vector<GLfloat> Color;
+        if (scene->mMeshes[i]->HasVertexColors(0))
+        {
+            for (size_t j = 0; j < scene->mMeshes[i]->mNumVertices; j++)
+            {
+                Color.push_back(scene->mMeshes[i]->mColors[0][j].r);
+                Color.push_back(scene->mMeshes[i]->mColors[0][j].g);
+                Color.push_back(scene->mMeshes[i]->mColors[0][j].b);
+                printf("Red: %f\n", scene->mMeshes[i]->mColors[0][j].r);
+                printf("Green: %f\n", scene->mMeshes[i]->mColors[0][j].g);
+                printf("Blue: %f\n", scene->mMeshes[i]->mColors[0][j].b);
+            }
+        }
         VertexAssembly* MeshVertices = new VertexAssembly(Pos,
                                                           Norm,
-                                                          TexCoords);
+                                                          TexCoords,
+                                                          Color);
 
         std::vector<unsigned int> Indices;
         for (size_t j = 0; j < scene->mMeshes[i]->mNumFaces; j++)
