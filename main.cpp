@@ -3,6 +3,7 @@
 #include "engineObjects/Components/Camera.h"
 #include "common/functions.hpp"
 #include "common/Header.h"
+#include "engineObjects/Components/Light.hpp"
 
 #define SDL_WIDTH 1024
 #define SDL_HEIGHT 728
@@ -62,6 +63,8 @@ int main(int argc, char* argv[])
     //Camera Setup
     Camera cam = Camera(win);
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+    GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
+    GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
     int x, y;
     bool Freelook = true;
 
@@ -75,10 +78,10 @@ int main(int argc, char* argv[])
     std::string texture_path = FindFile("assets", "Bob_Blue.png");
     GLuint Texture = loadDDS(texture_path.c_str());
     GLuint TextureID = glGetUniformLocation(programID, "myTextureSampler");
-    GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
-    GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
-    GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 
+    Light *ltest = new Light(vec3(1, 5, 2), vec3(1, 0, 1), 50.0f);
+    ltest->SetUniformVar(programID);
+     
     while (apprunning)
     {
         glClearColor(0.0, 0.0, 0.4f, 0.0);
@@ -164,9 +167,7 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &cam.GetMVP()[0][0]);
         glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &cam.GetModel()[0][0]);
         glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &cam.GetView()[0][0]);
-     
-        glm::vec3 lightPos = glm::vec3(1, 5, 2);
-        glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+        ltest->SendValueToUniformVar();
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Texture);

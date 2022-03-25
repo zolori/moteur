@@ -55,6 +55,8 @@ add_executable(moteur
 	engineObjects/Components/Mesh.cpp
 	engineObjects/Components/Camera.h
 	engineObjects/Components/Camera.cpp
+	engineObjects/Components/Light.hpp
+	engineObjects/Components/Light.cpp
 )
 
 add_dependencies(moteur copy_shaders)
