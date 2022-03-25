@@ -22,15 +22,13 @@ Mesh::~Mesh()
 	delete IndiceBuffer;
 }
 
-void Mesh::Draw()
+int Mesh::Draw()
 {
-
 	for (size_t i = 0; i < textures.size(); i++)
-	{
 		textures[i]->useIMG(i);
-	}
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	return indices.size();
 }
 
 void Mesh::setupMesh()

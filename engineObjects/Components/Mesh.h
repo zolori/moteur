@@ -24,7 +24,7 @@ public:
 	/**
 	* Draw the elements of the mesh
 	*/
-	void Draw();
+	int Draw();
 	//Attribute
 
 	VertexAssembly* vertices;
