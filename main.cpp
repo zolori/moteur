@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
     GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
     GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
     int x, y;
-    bool Freelook = true;
+    bool Freelook = false;
 
     glEnable(GL_CULL_FACE);
     //DeltaTime Setup
@@ -82,8 +82,31 @@ int main(int argc, char* argv[])
     GLuint Texture = loadDDS(texture_path.c_str());
     GLuint TextureID = glGetUniformLocation(programID, "myTextureSampler");
 
-    Light *ltest = new Light(vec3(1, 5, 2), vec3(1, 0, 1), 50.0f);
+    // std::vector<Light*> lights;
+    const char* lights[2]{};
+    Light* objectLights[2]{};
+
+    Light* ltest = new Light(vec3(1, 5, 2), vec3(1, 0, 1), 50.0f);
     ltest->SetUniformVar(programID);
+    ltest->SetName("light1");
+
+    Light* ltest2 = new Light(vec3(0, 5, 2), vec3(1, 1, 1), 100.0f);
+    ltest2->SetUniformVar(programID);
+    ltest2->SetName("light2");
+
+    lights[0] = ltest->GetName();
+    lights[1] = ltest2->GetName();
+    objectLights[0] = ltest;
+    objectLights[1] = ltest2;
+    int index = 0;
+    bool isActive = true;
+    float newLightPower = 0.0f;
+    vec3 newLightPosition = vec3(0.0, 0.0, 0.0);
+    float currentLightColor[3]{};
+
+
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    const ImVec2 base_pos = viewport->Pos;
 
     while (apprunning)
     {
@@ -122,7 +145,7 @@ int main(int argc, char* argv[])
                             break;
 
                         case SDLK_LCTRL:
-                            Freelook = false;
+                            Freelook = true;
                             break;
 
                         default:
@@ -133,7 +156,7 @@ int main(int argc, char* argv[])
                     switch (curEvent.key.keysym.sym)
                     {
                         case SDLK_LCTRL:
-                            Freelook = true;
+                            Freelook = false;
                         break;
                     }
                     break;
@@ -148,7 +171,10 @@ int main(int argc, char* argv[])
                     break;
 
                 case SDL_MOUSEWHEEL:
-                    cam.CameraInputScroll(curEvent.wheel.preciseY);
+                    if (Freelook)
+                    {
+                        cam.CameraInputScroll(curEvent.wheel.preciseY);
+                    }
                     break;
 
                 case SDL_QUIT:
@@ -170,7 +196,11 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &cam.GetMVP()[0][0]);
         glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &cam.GetModel()[0][0]);
         glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &cam.GetView()[0][0]);
-        ltest->SendValueToUniformVar();
+
+        for (int i = 0; i < 2; i++)
+        {
+            objectLights[i]->UpdateLight();
+        }
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Texture);
@@ -187,21 +217,68 @@ int main(int argc, char* argv[])
 
         ImGui::NewFrame();
         // Draw some widgets
-
+        
         auto curTime = steady_clock::now();
         duration<float> elapsedSeconds = curTime - prevTime;
 
+  
+        //Perfs Window
+        ImGui::SetNextWindowPos(ImVec2(base_pos.x + 100, base_pos.y + 100), ImGuiCond_FirstUseEver);
         ImGui::Begin("Perfs");
-        ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
-        ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
+        ImGui::Text("Frame Time (ms) : ", "");
+        ImGui::LabelText("","%f", elapsedSeconds.count() * 1e-3);
+        ImGui::Text("FPS : ", "");
+        ImGui::LabelText("", "%f", 1.0 / elapsedSeconds.count());
         ImGui::End();
+
+
+      
+        //Light Window
+        ImGui::SetNextWindowPos(ImVec2(base_pos.x +10, base_pos.y + 125), ImGuiCond_Always);
+        ImGui::Begin("Lights");
+        ImGui::Combo("Lights", &index, lights, IM_ARRAYSIZE(lights));
+        ImGui::BeginChild("Selected light Parameters", ImVec2(0.0,0.0), true, ImGuiWindowFlags_None);
+        //Light general info
+        ImGui::Text("%s", lights[index]);
+        isActive = objectLights[index]->GetActive();
+        ImGui::Checkbox("Active", &isActive);
+        objectLights[index]->SetActive(isActive);
+
+        //Light Parameters
+        ImGui::Text("Parameters", "");
+        if (isActive)
+        {
+            //Update light position
+            newLightPosition = objectLights[index]->GetLightPosition();
+            ImGui::SliderFloat("Light Position X", &newLightPosition.x, -15.0f, 15.0f);
+            ImGui::SliderFloat("Light Position Y", &newLightPosition.y, -15.0f, 15.0f);
+            ImGui::SliderFloat("Light Position Z", &newLightPosition.z, -15.0f, 15.0f);
+            objectLights[index]->SetLightPosition(newLightPosition);
+            ImGui::Separator();
+
+            //Update light Color
+            currentLightColor[0] = objectLights[index]->GetLightColor().x;
+            currentLightColor[1] = objectLights[index]->GetLightColor().y;
+            currentLightColor[2] = objectLights[index]->GetLightColor().z;
+            ImGui::ColorEdit3("Light Color", currentLightColor, 0);
+            ImGui::Separator();
+            objectLights[index]->SetLightColor(vec3(currentLightColor[0], currentLightColor[1], currentLightColor[2]));
+
+            //Update light power
+            newLightPower = objectLights[index]->GetLightPower();
+            ImGui::SliderFloat("Light Power", &newLightPower, 1.0f, 100.0f);
+            objectLights[index]->SetLightPower(newLightPower);
+
+        }
+        ImGui::EndChild();
+        ImGui::End();
+
 
         prevTime = curTime;
 
         //Rendering end
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
         SDL_GL_SwapWindow(win);
     }
     //delete scene;

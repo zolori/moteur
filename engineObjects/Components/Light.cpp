@@ -7,6 +7,7 @@ Light::Light(vec3 newLightPosition, vec3 newLightColor, float newLightPower)
 	lightPosition = newLightPosition;
 	lightColor = newLightColor;
 	lightPower = newLightPower;
+	active = true;
 }
 
 void Light::SetUniformVar(GLuint programID)
@@ -30,6 +31,18 @@ void Light::SendValueToUniformVar(vec3 newLightPosition, vec3 newLightColor, flo
 	glUniform1f(LightIDPower, newLightPower);
 }
 
+void Light::UpdateLight()
+{
+	if (active)
+	{
+		SendValueToUniformVar();
+	}
+	else
+	{
+		SendValueToUniformVar(lightPosition, lightColor, 0.0f);
+	}
+}
+
 vec3 Light::GetLightPosition()
 {
 	return lightPosition;
@@ -43,6 +56,26 @@ vec3 Light::GetLightColor()
 float Light::GetLightPower()
 {
 	return lightPower;
+}
+
+const char* Light::GetName()
+{
+	return name;
+}
+
+bool Light::GetActive()
+{
+	return active;
+}
+
+void Light::SetActive(bool newActive)
+{
+	active = newActive;
+}
+
+void Light::SetName(const char* newName)
+{
+	name = newName;
 }
 
 void Light::SetLightPosition(vec3 newLightPosition)

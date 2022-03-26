@@ -16,6 +16,7 @@ struct DeltaTime {
     float deltaTime;
     Duration duration;
     float GetDeltaTime();
+    std::chrono::duration<float> GetDuration();
 };
 
 std::string FindFile(const char* directory, const char* name);

@@ -38,13 +38,18 @@ inline float Seconds(Duration const& iDuration)
 
 float DeltaTime::GetDeltaTime()
 {
-	currentTime = Clock::now();
-	duration = currentTime - lastTime;
+	GetDuration();
 	deltaTime = Seconds(duration);
 	lastTime = currentTime;
 	return deltaTime;
 }
 
+std::chrono::duration<float> DeltaTime::GetDuration()
+{
+	currentTime = Clock::now();
+	duration = currentTime - lastTime;
+	return duration;
+}
 
 GLuint loadDDS(const char* imagepath) {
 
@@ -153,6 +158,7 @@ ImGuiIO& initApp(SDL_Window* win)
 	ImGui_ImplSDL2_InitForOpenGL(win, context);
 	ImGui_ImplOpenGL3_Init();
 	ImGui::StyleColorsDark();
+
 	return io;
 }
 
