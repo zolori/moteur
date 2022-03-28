@@ -44,6 +44,10 @@ add_executable(moteur
 	engineObjects/CoreClasses/VertexAssembly.cpp
 	engineObjects/CoreClasses/Texture.h
 	engineObjects/CoreClasses/Texture.cpp
+	engineObjects/CoreClasses/BulletPhysics.h
+	engineObjects/CoreClasses/BulletPhysics.cpp
+	engineObjects/CoreClasses/SolidSphere.h
+	engineObjects/CoreClasses/SolidSphere.cpp
 	engineObjects/Component.h
 	engineObjects/Component.cpp
 	engineObjects/ComponentName.h

@@ -3,6 +3,8 @@
 #include "engineObjects/Components/Camera.h"
 #include "common/functions.hpp"
 #include "common/Header.h"
+#include "engineObjects/CoreClasses/BulletPhysics.h"
+#include "engineObjects/CoreClasses/SolidSphere.h"
 
 #define SDL_WIDTH 1024
 #define SDL_HEIGHT 728
@@ -50,7 +52,7 @@ int main(int argc, char* argv[])
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+    /*
     std::vector<Mesh*> MeshesToBeDrawn;
     std::string mesh_path = FindFile("assets", "Pool.fbx");
     const aiScene* scene = DoTheImport(mesh_path.c_str());
@@ -58,8 +60,54 @@ int main(int argc, char* argv[])
     {
         MeshesToBeDrawn = SceneProcessing(scene);
     }
-  
+    */
+    /*
+    GLuint VAO;
 
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+
+    BulletPhysics* PhysicsEngine = new BulletPhysics();
+
+    float cubeWidth = 1.0f;
+    float cubeHeight = 1.0f;
+    float cubeDepth = 1.0f;
+
+    std::vector<float> cubePosBufferData = {
+        cubeWidth, cubeHeight, cubeDepth,
+        -cubeWidth, cubeHeight, cubeDepth,
+        cubeWidth, -cubeHeight, cubeDepth,
+        -cubeWidth, -cubeHeight, cubeDepth,
+        cubeWidth, cubeHeight, -cubeDepth,
+        -cubeWidth, cubeHeight, -cubeDepth,
+        cubeWidth, -cubeHeight, -cubeDepth,
+        -cubeWidth, -cubeHeight, -cubeDepth,
+    };
+
+    Buffer* cubeBufferPos = new Buffer(cubePosBufferData, 0, 3);
+    cubeBufferPos->BindBuffer();
+    PhysicsEngine->CreateBox(cubeWidth, cubeHeight, cubeDepth, cubeWidth, cubeHeight, cubeDepth, 0.1f);
+
+    std::vector<unsigned int> cubeIndiceBufferData = {
+        0,1,2,
+        3,2,1,
+        4,0,6,
+        6,0,2,
+        5,1,4,
+        4,1,0,
+        7,3,1,
+        7,1,5,
+        5,4,7,
+        7,4,6,
+        7,2,3,
+        7,6,2
+    };
+
+    IndicesBuffer* cubeBufferIndices = new IndicesBuffer(cubeIndiceBufferData);
+    */
+
+    SolidSphere sphere(1, 12, 24);
     //Camera Setup
     Camera cam = Camera(win);
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
@@ -161,12 +209,21 @@ int main(int argc, char* argv[])
 
         glUseProgram(programID);
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &cam.GetMVP()[0][0]);
+        /*
         for (size_t i = 0; i < MeshesToBeDrawn.size(); i++)
         {
             pute += MeshesToBeDrawn[i]->Draw();
         }
 
         pute = pute / 3;
+        */
+        /*
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, cubeIndiceBufferData.size(), GL_UNSIGNED_INT, 0);
+        PhysicsEngine->Update();
+        */
+
+        sphere.Draw();
 
         //Render Loop
         ImGui_ImplOpenGL3_NewFrame();
