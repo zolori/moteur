@@ -234,7 +234,7 @@ int main(int argc, char* argv[])
         duration<float> elapsedSeconds = curTime - prevTime;
 
         ImGui::Begin("Perfs");
-        //ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
+        ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
         ImGui::LabelText("Triangles : ", "%d", var);
         ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
         ImGui::End();
