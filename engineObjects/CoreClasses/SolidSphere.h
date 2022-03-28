@@ -3,6 +3,7 @@
 #include "../../common/Header.h"
 #include <cmath>
 #include "IndicesBuffer.h"
+#include <iostream>
 class SolidSphere
 {
 public:
