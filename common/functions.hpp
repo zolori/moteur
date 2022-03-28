@@ -8,7 +8,6 @@ using Clock = std::chrono::high_resolution_clock;
 using Timestamp = Clock::time_point;
 using Duration = Clock::duration;
 
-//std::filesystem::path appPath;
 
 struct DeltaTime {
     Timestamp currentTime;

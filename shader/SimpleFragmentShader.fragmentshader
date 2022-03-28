@@ -17,29 +17,27 @@ struct PointLight
 	float LightParam_Power;
 };  
 
-
 // Values that stay constant for the whole mesh.
 uniform sampler2D myTextureSampler;
-uniform mat4 MV;
 #define LightNumber 2
 uniform PointLight pointLights[LightNumber];
-vec3 CalculatePointLightLightning(PointLight pt);
+vec3 CalculatePointLight(PointLight pt);
 
 void main(){
 	
 
 	vec3 result = vec3(0.0);
 	int i;
-	for(i=0;i<1;i++)
+	for(i=0;i<2;i++)
 	{
-		result += CalculatePointLightLightning(pointLights[i]); 
+		result += CalculatePointLight(pointLights[i]); 
 	}
 	color = vec4(result, 1.0);
 }
 
-vec3 CalculatePointLightLightning(PointLight pt)
+vec3 CalculatePointLight(PointLight pt)
 {
-
+	//vec3 test = vec3(0.0);
 	// Light emission properties
 	vec3 LightColor = pt.LightParam_Color;
 	float LightPower = pt.LightParam_Power;

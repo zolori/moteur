@@ -4,6 +4,8 @@
 #include "common/functions.hpp"
 #include "common/Header.h"
 #include "engineObjects/Components/Light.hpp"
+#include <glm/gtx/string_cast.hpp>
+
 
 #define SDL_WIDTH 1024
 #define SDL_HEIGHT 728
@@ -86,11 +88,11 @@ int main(int argc, char* argv[])
     Light* objectLights[2]{};
     int lightNumber = 0;
     Light* ltest = new Light(vec3(1, 5, 2), vec3(1, 0, 1), 50.0f);
-    ltest->SetUniformVar(programID);
+    //ltest->SetUniformVar(programID);
     ltest->SetName("light1");
 
-    Light* ltest2 = new Light(vec3(0, 5, 2), vec3(1, 1, 1), 100.0f);
-    ltest2->SetUniformVar(programID);
+    Light* ltest2 = new Light(vec3(0, 5, 2), vec3(0.5, 1, 1), 100.0f);
+    //ltest2->SetUniformVar(programID);
     ltest2->SetName("light2");
 
     lights[0] = ltest->GetName();
@@ -193,14 +195,7 @@ int main(int argc, char* argv[])
             cam.ResetMousePosition();
         }
 
-        std::string currentPt = "pointsLights[]";
-        for (int i = 0; i < 2; i++)
-        {
-            std::string newPt = currentPt.insert(13, to_string(i));
-            glUniform3fv(glGetUniformLocation(programID, (newPt + ".position").c_str()), 1, &objectLights[i]->GetLightPosition()[0]);
-            glUniform3fv(glGetUniformLocation(programID, (newPt + ".LightParam_Color").c_str()), 1, &objectLights[i]->GetLightColor()[0]);
-            glUniform1f(glGetUniformLocation(programID, (newPt + ".LightParam_Power").c_str()), objectLights[i]->GetLightPower());
-        }
+
 
         glUseProgram(programID);
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &cam.GetMVP()[0][0]);
@@ -219,6 +214,38 @@ int main(int argc, char* argv[])
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Texture);
         glUniform1i(TextureID, 0);
+       
+        GLint numUnif;
+        GLint nameLength;
+        glGetProgramiv(programID, GL_ACTIVE_UNIFORMS,&numUnif);
+        glGetProgramiv(programID, GL_ACTIVE_UNIFORM_MAX_LENGTH, &nameLength);
+        std::vector<char> nameStore(nameLength);
+
+     /*   for (int i = 0; i < numUnif; ++i)
+        {
+            GLint curNameLength;
+            GLint arraySize;
+            GLenum type;
+            glGetActiveUniform(programID, i, nameLength, &curNameLength, &arraySize, &type, nameStore.data());
+            std::string curUnifName(nameStore.data(), nameStore.data() + curNameLength);
+            printf("Unif %i : %s\n", i, curUnifName.c_str());
+        }*/
+
+        std::string currentPt = "pointLights[]";
+        std::string newPt;
+        for (int i = 0; i < 2; i++)
+        {
+            newPt = currentPt;
+            newPt.insert(12, to_string(i));
+            //printf(newPt.c_str());
+            vec3 position = objectLights[i]->GetLightPosition();
+            //printf(to_string(position).c_str());
+            vec3 color = objectLights[i]->GetLightColor();
+            GLint lightPosLoc = glGetUniformLocation(programID, (newPt + ".position").c_str());
+            glUniform3f(lightPosLoc, position.x, position.y, position.z);
+            glUniform3f(glGetUniformLocation(programID, (newPt + ".LightParam_Color").c_str()), color.x, color.y, color.z);
+            glUniform1f(glGetUniformLocation(programID, (newPt + ".LightParam_Power").c_str()), objectLights[i]->GetLightPower());
+        }
 
         for (size_t i = 0; i < MeshesToBeDrawn.size(); i++)
         {
