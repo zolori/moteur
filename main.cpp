@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    /*
+    
     std::vector<Mesh*> MeshesToBeDrawn;
     std::string mesh_path = FindFile("assets", "Pool.fbx");
     const aiScene* scene = DoTheImport(mesh_path.c_str());
@@ -60,8 +60,7 @@ int main(int argc, char* argv[])
     {
         MeshesToBeDrawn = SceneProcessing(scene);
     }
-    */
-    /*
+    
     GLuint VAO;
 
     glGenVertexArrays(1, &VAO);
@@ -105,7 +104,7 @@ int main(int argc, char* argv[])
     };
 
     IndicesBuffer* cubeBufferIndices = new IndicesBuffer(cubeIndiceBufferData);
-    */
+    
 
     SolidSphere sphere(1, 12, 24);
     //Camera Setup
@@ -113,14 +112,14 @@ int main(int argc, char* argv[])
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
     int x, y;
-    //glEnable(GL_CULL_FACE);
+
     struct DeltaTime Time;
-    //SDL_ShowCursor(SDL_DISABLE);
+    SDL_ShowCursor(SDL_DISABLE);
 
     auto beginTime = steady_clock::now();
     auto prevTime = steady_clock::now();
-    int pute = 0;
-    int* drawCallCount = &pute;
+    int var = 0;
+    int* drawCallCount = &var;
 
     bool Freelook = true;
 
@@ -209,19 +208,18 @@ int main(int argc, char* argv[])
 
         glUseProgram(programID);
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &cam.GetMVP()[0][0]);
-        /*
+        
         for (size_t i = 0; i < MeshesToBeDrawn.size(); i++)
         {
-            pute += MeshesToBeDrawn[i]->Draw();
+            var += MeshesToBeDrawn[i]->Draw();
         }
 
-        pute = pute / 3;
-        */
-        /*
+        var = var / 3;
+        
+        
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, cubeIndiceBufferData.size(), GL_UNSIGNED_INT, 0);
         PhysicsEngine->Update();
-        */
 
         sphere.Draw();
 
@@ -237,7 +235,7 @@ int main(int argc, char* argv[])
 
         ImGui::Begin("Perfs");
         //ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
-        ImGui::LabelText("Triangles : ", "%d", pute);
+        ImGui::LabelText("Triangles : ", "%d", var);
         ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
         ImGui::End();
 
@@ -247,7 +245,7 @@ int main(int argc, char* argv[])
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        pute = 0;
+        var = 0;
 
         SDL_GL_SwapWindow(win);
     }
