@@ -4,6 +4,16 @@
 
 Light::Light(vec3 newLightPosition, vec3 newLightColor, float newLightPower)
 {
+	name = "";
+	lightPosition = newLightPosition;
+	lightColor = newLightColor;
+	lightPower = newLightPower;
+	active = true;
+}
+
+Light::Light(const char* newName, vec3 newLightPosition, vec3 newLightColor, float newLightPower)
+{
+	name = newName;
 	lightPosition = newLightPosition;
 	lightColor = newLightColor;
 	lightPower = newLightPower;

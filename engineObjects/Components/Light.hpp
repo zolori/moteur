@@ -14,6 +14,8 @@ private:
 public :
 	//Light();
 	Light(vec3 newLightPosition, vec3 newLightColor, float newLightPower);
+	Light(const char* newName, vec3 newLightPosition, vec3 newLightColor, float newLightPower);
+
 	//Getter
 	vec3 GetLightPosition();
 	vec3 GetLightColor();

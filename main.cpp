@@ -51,27 +51,27 @@ int main(int argc, char* argv[])
 
     //Light Setup
     std::vector<Light*> objectLights;
-    int lightNumber = 0;
-    Light* ltest = new Light(vec3(1, 5, 2), vec3(1, 0, 1), 50.0f);
-    //ltest->SetUniformVar(programID);
-    ltest->SetName("light1");
+    Light* light1 = new Light("light1", vec3(1.0, 5.0, 2.0), vec3(1.0, 0.0, 1.0), 50.0f);
+    Light* light2 = new Light("light2",vec3(0.0, 5.0, 2.0), vec3(0.5, 1.0, 1.0), 100.0f);
+    Light* light3 = new Light("light3", vec3(-1.0, 5.0, 2.0), vec3(0.25, 0.75, 0), 70.0f);
+    /*Light* light4 = new Light("light4", vec3(2, 5, 2), vec3(0.15, 1, 0.65), 100.0f);
+    Light* light5 = new Light("light5", vec3(-2, 5, 2), vec3(1, .45, 0.35), 50.0f);
+    Light* light6 = new Light("light6", vec3(2, 5, 2), vec3(0.5, .56, .89), 100.0f);*/
+    const char* lights[3]{};
+    objectLights.push_back(light1);
+    objectLights.push_back(light2);
+    objectLights.push_back(light3);
+    /*objectLights.push_back(light4);
+    objectLights.push_back(light5);
+    objectLights.push_back(light6);*/
 
-    Light* ltest2 = new Light(vec3(0, 5, 2), vec3(0.5, 1, 1), 100.0f);
-    //ltest2->SetUniformVar(programID);
-    ltest2->SetName("light2");
-    const char* lights[2]{};
-    lights[0] = ltest->GetName();
-    lights[1] = ltest2->GetName();
-    objectLights.push_back(ltest);
-    objectLights.push_back(ltest2);
+    for (int i = 0; i < 3; i++)
+    {
+        lights[i] = objectLights[i]->GetName();
+    }
 
 
-    //Shader Setup
-    /*std::string vertex_file_path = FindFile("shader", "SimpleVertexShader.vertexshader");
-    std::string  fragment_file_path = FindFile("shader", "SimpleFragmentShader.fragmentshader");
-    */
-    //GLuint programID = LoadShaders(vertex_file_path.c_str(), fragment_file_path.c_str());
-    Program prog1 = Program(SHADER_DIRECTORY, VERTEX_SHADER, FRAGMENT_SHADER,objectLights.size());
+    Program prog1 = Program(SHADER_DIRECTORY, VERTEX_SHADER, FRAGMENT_SHADER,3);
 
     //Mesh To Draw Setup
     std::vector<Mesh*> MeshesToBeDrawn;
@@ -84,9 +84,6 @@ int main(int argc, char* argv[])
     
     //Camera Setup
     Camera cam = Camera(win);
-    /*GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-    GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
-    GLuint ModelMatrixID = glGetUniformLocation(programID, "M");*/
     int x, y;
     bool Freelook = false;
 
@@ -99,11 +96,6 @@ int main(int argc, char* argv[])
     std::string texture_path = FindFile("assets", "Bob_Blue.png");
     GLuint Texture = loadDDS(texture_path.c_str());
     prog1.AddUniformVar("myTextureSampler");
-    //GLuint TextureID = glGetUniformLocation(prog1.GetNum(), "myTextureSampler");
-
-    //Light* objectLights[2]{};
-  
-    //prog1.SetUpUniformLights(objectLights);
 
     int index = 0;
     bool isActive = true;

@@ -85,36 +85,35 @@ void Program::UpdateLights(std::vector<Light*> objectLights)
     int i;
     int gap = 4;
     int index = 1;
-   // std::cout << "taille uniform :" << uniformVariable.size() << std::endl;
 
-    
+   
     for (i=0; i < objectLights.size(); i++)
     {
         index += 3;
         int index1 = index + 1;
         int index2 = index + 2;
-
-       /* std::cout << index << std::endl;
+        /*
+        std::cout << index << std::endl;
         std::cout << index1 << std::endl;
         std::cout << index2 << std::endl;*/
 
-        /*float x = objectLights[i]->GetLightPosition().x;
+        float x = objectLights[i]->GetLightPosition().x;
         float y = objectLights[i]->GetLightPosition().y;
         float z = objectLights[i]->GetLightPosition().z;
-         /*
+        
         float x1 = objectLights[i]->GetLightColor().x;
         float y1 = objectLights[i]->GetLightColor().y;
         float z1 = objectLights[i]->GetLightColor().z;
 
         std::cout << "objectLights[" << i << "] -> " <<
-            "light[" << index1 << "].light_color = " << x1 << "," << y1 << "," << z1 << std::endl;
+            "light[" << index << "].light_color = " << x1 << "," << y1 << "," << z1 << std::endl;
 
         std::cout << "objectLights[" << i << "] -> " << 
-            "light["<< index << "].position = " << x << "," << y << "," << z << std::endl;*/
+            "light["<< index2 << "].position = " << x << "," << y << "," << z << std::endl;
 
-            /*std::cout << "objectLights[" << i << "] -> " <<
-              "light[" << index2 << "].light_power = " << objectLights[i]->GetLightPower() << std::endl;
-          */
+        std::cout << "objectLights[" << i << "] -> " <<
+              "light[" << index1 << "].light_power = " << objectLights[i]->GetLightPower() << std::endl;
+    
         SetVector(uniformVariable[index], objectLights[i]->GetLightColor());
 
         SetVector(uniformVariable[index2], objectLights[i]->GetLightPosition());

@@ -10,6 +10,7 @@ in vec3 LightDirection_cameraspace;
 // Ouput data
 out vec4 color;
 
+#define LightNumber 3
 struct PointLight 
 {    
     vec3 position;
@@ -19,7 +20,6 @@ struct PointLight
 
 // Values that stay constant for the whole mesh.
 uniform sampler2D myTextureSampler;
-#define LightNumber 2
 uniform PointLight pointLights[LightNumber];
 vec3 CalculatePointLight(PointLight pt);
 

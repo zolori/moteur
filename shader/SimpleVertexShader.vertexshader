@@ -16,12 +16,14 @@ uniform mat4 MVP;
 uniform mat4 V;
 uniform mat4 M;
 
-#define LightNumber 2
+#define LightNumber 3
 struct PointLight {    
     vec3 position;
 	vec3 LightParam_Color;
 	float LightParam_Power;
 };  
+
+
 uniform PointLight pointLights[LightNumber];
 
 vec3 CalculateLightPositionCameraSpace(PointLight pt,vec3 EyeDirection_cameraspace);

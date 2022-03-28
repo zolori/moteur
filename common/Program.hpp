@@ -7,7 +7,6 @@ private:
 	GLuint  num;
 	std::vector<GLuint> uniformVariable;
 public:
-	Program(const char* directory, const char* vertexShader, const char* fragmentShader);
 	Program(const char* directory, const char* vertexShader, const char* fragmentShader, int numberOfLights);
 	void Use();
 	GLuint GetNum();
@@ -25,8 +24,6 @@ public:
 	void UpdateCamera(const GLfloat* MVP, const GLfloat* V, const GLfloat* M);
 
 	void SetUpUniformLights(int numberOfLights);
-
-	void SetUpUniformLights(std::vector<Light*> objectLights);
 	void UpdateLights(std::vector<Light*> objectLight);
 
 
