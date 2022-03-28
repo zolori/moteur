@@ -10,7 +10,7 @@ in vec3 LightDirection_cameraspace;
 // Ouput data
 out vec4 color;
 
-#define LightNumber 3
+#define LightNumber 2
 struct PointLight 
 {    
     vec3 position;

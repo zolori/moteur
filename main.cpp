@@ -51,27 +51,27 @@ int main(int argc, char* argv[])
 
     //Light Setup
     std::vector<Light*> objectLights;
-    Light* light1 = new Light("light1", vec3(1.0, 5.0, 2.0), vec3(1.0, 0.0, 1.0), 50.0f);
+    Light* light1 = new Light("light1", vec3(0.0, 5.0, 2.0), vec3(1.0, 0.0, 1.0), 50.0f);
     Light* light2 = new Light("light2",vec3(0.0, 5.0, 2.0), vec3(0.5, 1.0, 1.0), 100.0f);
-    Light* light3 = new Light("light3", vec3(-1.0, 5.0, 2.0), vec3(0.25, 0.75, 0), 70.0f);
+    //Light* light3 = new Light("light3", vec3(-1.0, 5.0, 2.0), vec3(0.25, 0.75, 0), 70.0f);
     /*Light* light4 = new Light("light4", vec3(2, 5, 2), vec3(0.15, 1, 0.65), 100.0f);
     Light* light5 = new Light("light5", vec3(-2, 5, 2), vec3(1, .45, 0.35), 50.0f);
     Light* light6 = new Light("light6", vec3(2, 5, 2), vec3(0.5, .56, .89), 100.0f);*/
-    const char* lights[3]{};
+    const char* lights[2]{};
     objectLights.push_back(light1);
     objectLights.push_back(light2);
-    objectLights.push_back(light3);
+    //objectLights.push_back(light3);
     /*objectLights.push_back(light4);
     objectLights.push_back(light5);
     objectLights.push_back(light6);*/
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 2; i++)
     {
         lights[i] = objectLights[i]->GetName();
     }
 
 
-    Program prog1 = Program(SHADER_DIRECTORY, VERTEX_SHADER, FRAGMENT_SHADER,3);
+    Program prog1 = Program(SHADER_DIRECTORY, VERTEX_SHADER, FRAGMENT_SHADER,2);
 
     //Mesh To Draw Setup
     std::vector<Mesh*> MeshesToBeDrawn;

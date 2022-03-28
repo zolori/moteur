@@ -16,7 +16,7 @@ uniform mat4 MVP;
 uniform mat4 V;
 uniform mat4 M;
 
-#define LightNumber 3
+#define LightNumber 2
 struct PointLight {    
     vec3 position;
 	vec3 LightParam_Color;
