@@ -13,7 +13,7 @@
 
 using namespace std;
 using namespace glm;
-
+   
 
 SDL_Window* SetUpWindow()
 {
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
     {
         MeshesToBeDrawn = SceneProcessing(scene);
     }
-
+    
     //Camera Setup
     Camera cam = Camera(win);
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
@@ -82,10 +82,9 @@ int main(int argc, char* argv[])
     GLuint Texture = loadDDS(texture_path.c_str());
     GLuint TextureID = glGetUniformLocation(programID, "myTextureSampler");
 
-    // std::vector<Light*> lights;
     const char* lights[2]{};
     Light* objectLights[2]{};
-
+    int lightNumber = 0;
     Light* ltest = new Light(vec3(1, 5, 2), vec3(1, 0, 1), 50.0f);
     ltest->SetUniformVar(programID);
     ltest->SetName("light1");
@@ -98,6 +97,8 @@ int main(int argc, char* argv[])
     lights[1] = ltest2->GetName();
     objectLights[0] = ltest;
     objectLights[1] = ltest2;
+
+
     int index = 0;
     bool isActive = true;
     float newLightPower = 0.0f;
@@ -192,15 +193,28 @@ int main(int argc, char* argv[])
             cam.ResetMousePosition();
         }
 
+        std::string currentPt = "pointsLights[]";
+        for (int i = 0; i < 2; i++)
+        {
+            std::string newPt = currentPt.insert(13, to_string(i));
+            glUniform3fv(glGetUniformLocation(programID, (newPt + ".position").c_str()), 1, &objectLights[i]->GetLightPosition()[0]);
+            glUniform3fv(glGetUniformLocation(programID, (newPt + ".LightParam_Color").c_str()), 1, &objectLights[i]->GetLightColor()[0]);
+            glUniform1f(glGetUniformLocation(programID, (newPt + ".LightParam_Power").c_str()), objectLights[i]->GetLightPower());
+        }
+
         glUseProgram(programID);
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &cam.GetMVP()[0][0]);
         glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &cam.GetModel()[0][0]);
         glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &cam.GetView()[0][0]);
 
-        for (int i = 0; i < 2; i++)
+       /* ltest->UpdateLight();
+        ltest->UpdateLight();*/
+
+
+        /*for (int i = 0; i < 2; i++)
         {
             objectLights[i]->UpdateLight();
-        }
+        }*/
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Texture);
@@ -210,6 +224,7 @@ int main(int argc, char* argv[])
         {
             MeshesToBeDrawn[i]->Draw();
         }
+        
 
         //Render Loop
         ImGui_ImplOpenGL3_NewFrame();
