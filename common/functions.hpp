@@ -24,3 +24,5 @@ GLuint loadDDS(const char* imagepath);
 std::string_view GetAppPath();
 GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
 ImGuiIO& initApp(SDL_Window* win);
+
+void DisplayUniform(GLuint program);

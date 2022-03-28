@@ -36,6 +36,8 @@ add_executable(moteur
 	common/AssimpImporter.cpp
 	common/Header.h
 	common/stb_image.h
+	common/Program.hpp
+	common/Program.cpp
 	engineObjects/CoreClasses/Buffer.h
 	engineObjects/CoreClasses/Buffer.cpp
 	engineObjects/CoreClasses/IndicesBuffer.h

@@ -10,17 +10,10 @@ private:
 	vec3 lightPosition;
 	vec3 lightColor;
 	float lightPower;
-	GLuint LightIDPosition;
-	GLuint LightIDColor;
-	GLuint LightIDPower;
 
 public :
 	//Light();
 	Light(vec3 newLightPosition, vec3 newLightColor, float newLightPower);
-	void SetUniformVar(GLuint programID);
-	void SendValueToUniformVar();
-	void SendValueToUniformVar(vec3 newLightPosition, vec3 newLightColor, float newLightPower);
-	void UpdateLight();
 	//Getter
 	vec3 GetLightPosition();
 	vec3 GetLightColor();

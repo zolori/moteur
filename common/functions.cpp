@@ -162,6 +162,25 @@ ImGuiIO& initApp(SDL_Window* win)
 	return io;
 }
 
+ void DisplayUniform(GLuint program)
+{
+  GLint numUnif;
+  GLint nameLength;
+  glGetProgramiv(program, GL_ACTIVE_UNIFORMS,&numUnif);
+  glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &nameLength);
+  std::vector<char> nameStore(nameLength);
+
+  for (int i = 0; i < numUnif; ++i)
+  {
+	  GLint curNameLength;
+	  GLint arraySize;
+	  GLenum type;
+	  glGetActiveUniform(program, i, nameLength, &curNameLength, &arraySize, &type, nameStore.data());
+	  std::string curUnifName(nameStore.data(), nameStore.data() + curNameLength);
+	  printf("Unif %i : %s\n", i, curUnifName.c_str());
+  }
+}
+
 std::string FindFile(const char* directory, const char* name)
 {
 	if (appDir.empty())
