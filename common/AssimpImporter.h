@@ -5,6 +5,22 @@
 #include "../engineObjects/Components/Mesh.h"
 #include <vector>
 
+struct Material
+{
+	glm::vec4 color;
+};
+
+struct Model
+{
+	Mesh* m_Mesh;
+	Material* m_Mat;
+};
+
+struct ImportResult
+{
+	std::vector<Model> m_Models;
+};
+
 /**
 * Import the object in a scene
 * 

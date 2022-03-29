@@ -1,13 +1,13 @@
 #include "BulletPhysics.h"
 
-BulletPhysics::BulletPhysics()
+BulletPhysics::BulletPhysics(float gravity)
 {
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
 	overlappingPairCache = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver;
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-	dynamicsWorld->setGravity(btVector3(0, -10, 0));
+	dynamicsWorld->setGravity(btVector3(0, gravity, 0));
 }
 
 BulletPhysics::~BulletPhysics()
@@ -145,4 +145,9 @@ void BulletPhysics::CreatePlane()
 	body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
 	dynamicsWorld->addRigidBody(body);
 	rigidbodies.push_back(body);
+}
+
+void BulletPhysics::SetGravity(float gravity)
+{
+	dynamicsWorld->setGravity(btVector3(0, gravity, 0));
 }
