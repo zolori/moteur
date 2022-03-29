@@ -1,13 +1,13 @@
 #include "BulletPhysics.h"
 
-BulletPhysics::BulletPhysics()
+BulletPhysics::BulletPhysics(float gravity)
 {
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
 	overlappingPairCache = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver;
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-	dynamicsWorld->setGravity(btVector3(0, -10, 0));
+	dynamicsWorld->setGravity(btVector3(0, gravity, 0));
 }
 
 BulletPhysics::~BulletPhysics()
@@ -123,7 +123,7 @@ void BulletPhysics::CreateSphere(float radius, float xPos, float yPos, float zPo
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
 	btRigidBody* body = new btRigidBody(rbInfo);
-	body->setRestitution(.9);
+	body->setRestitution(.8);
 	dynamicsWorld->addRigidBody(body);
 	rigidbodies.push_back(body);
 }
@@ -141,8 +141,13 @@ void BulletPhysics::CreatePlane()
 	btMotionState* motion = new btDefaultMotionState(startTransform);
 	btRigidBody::btRigidBodyConstructionInfo info(0.0, motion, plane);
 	btRigidBody* body = new btRigidBody(info);
-	body->setRestitution(.9);
+	body->setRestitution(1);
 	body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
 	dynamicsWorld->addRigidBody(body);
 	rigidbodies.push_back(body);
+}
+
+void BulletPhysics::SetGravity(float gravity)
+{
+	dynamicsWorld->setGravity(btVector3(0.0, gravity, 0.0));
 }

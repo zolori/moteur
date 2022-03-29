@@ -160,7 +160,7 @@ int main(int argc, char* argv[])
                             apprunning = SDL_FALSE;
                             break;
 
-                        case SDLK_LCTRL:
+                        case SDLK_LALT:
                             Freelook = false;
                             break;
                         case SDLK_SPACE:
@@ -269,6 +269,13 @@ int main(int argc, char* argv[])
         ImGui::LabelText("Triangles : ", "%d", pute);
         ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
         ImGui::End();
+
+        static float sliderFloat = -10.f;
+        ImGui::Begin("Tools");
+        ImGui::SliderFloat("Gravity", &sliderFloat, -20.f, 20.f);
+        ImGui::End();
+
+        PhysicsEngine->SetGravity(sliderFloat);
 
         prevTime = curTime;
 
