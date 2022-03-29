@@ -149,12 +149,3 @@ mat4 Camera::GetView()
     return View;
 }
 
-mat4 Camera::GetModel()
-{
-    return Model;
-}
-
-mat4 Camera::GetView()
-{
-    return View;
-}

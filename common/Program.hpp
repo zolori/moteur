@@ -5,11 +5,11 @@ class Program {
 
 private:
 	GLuint  num;
-	std::vector<GLuint> uniformVariable;
 public:
 	Program(const char* directory, const char* vertexShader, const char* fragmentShader, int numberOfLights);
 	void Use();
 	GLuint GetNum();
+	std::vector<GLuint> uniformVariable;
 
 	//Generic functions
 	void AddUniformVar(const char* name);

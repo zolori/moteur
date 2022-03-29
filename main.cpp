@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    // 
+
     //Camera Setup
     Camera cam = Camera(win);
     int x, y;
@@ -173,9 +173,6 @@ int main(int argc, char* argv[])
     }
     while (apprunning)
     {
-        glClearColor(0.0, 0.0, 0.4f, 0.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         float deltaTime = Time.GetDeltaTime();
 
         SDL_Event curEvent;
@@ -237,7 +234,7 @@ int main(int argc, char* argv[])
                     switch (curEvent.key.keysym.sym)
                     {
                         case SDLK_LALT:
-                            Freelook = false;
+                            Freelook = true;
                         break;
                     }
                     break;
@@ -278,20 +275,21 @@ int main(int argc, char* argv[])
 
         cam.SetView();
         cam.SetProjection();
-
         for (size_t i = 0; i < GameObjects.size(); i++)
         {
             glm::mat4 Model = glm::mat4(1.0f);
             Mesh* MeshComponent = (Mesh*)GameObjects[i]->GetSpecificComponent(ComponentName::MESH_COMPONENT);
             glm::vec3 translationVector = vec3(MeshComponent->TransformMatrix(PhysicsEngine->rigidbodies[i])[3].x,
-            MeshComponent->TransformMatrix(PhysicsEngine->rigidbodies[i])[3].y,
-            MeshComponent->TransformMatrix(PhysicsEngine->rigidbodies[i])[3].z);
+                                                MeshComponent->TransformMatrix(PhysicsEngine->rigidbodies[i])[3].y,
+                                                MeshComponent->TransformMatrix(PhysicsEngine->rigidbodies[i])[3].z);
             Model = glm::translate(Model, translationVector);
             glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
             prog1.UpdateCamera(&MVP[0][0], &Model[0][0], &cam.GetView()[0][0]);
-
             if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE)
             {
+                printf("Pos Plane x : %f", translationVector.x);
+                printf("Pos Plane y : %f", translationVector.y);
+                printf("Pos Plane z : %f", translationVector.z);
                 MeshComponent->DrawPlane();
             }
             else
