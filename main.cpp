@@ -84,16 +84,16 @@ int main(int argc, char* argv[])
             PhysicsEngine->CreatePlane();
             //Parameter for the render of the plane
             std::vector<GLfloat> Vertices = {
-                -5,0,5,
-                -5,0,-5,
-                5,0,-5,
-                5,0,5
+                -1000,0,1000,
+                -1000,0,-1000,
+                1000,0,-1000,
+                1000,0,1000
             };
             std::vector<GLfloat> TexCoord = {
-                -5, 5,
-                -5, -5,
-                5, -5,
-                5, 5
+                -1000,0,1000,
+                -1000,0,-1000,
+                1000,0,-1000,
+                1000,0,1000
             };
             std::vector<unsigned int> Indices = {
                 0, 1, 2,
