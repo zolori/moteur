@@ -51,9 +51,6 @@ int main(int argc, char* argv[])
 
     GLuint programID = LoadShaders(vertex_file_path.c_str(), fragment_file_path.c_str());
 
-    auto beginTime = steady_clock::now();
-    auto prevTime = steady_clock::now();
-
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -223,6 +220,7 @@ int main(int argc, char* argv[])
                             Freelook = false;
                             break;
                         case SDLK_SPACE:
+                        {
                             //Create a sphere object of name Sphere
                             Object* sphereObject = new Object("Sphere");
                             //Create the sphere in a physic way
@@ -238,6 +236,8 @@ int main(int argc, char* argv[])
                             sphereObject->AddComponent(sphereMesh);
                             //Put the sphere object in the vector housing all of them
                             GameObjects.push_back(sphereObject);
+                            break;
+                        }
                         default:
                             break;
                     }
@@ -334,7 +334,7 @@ int main(int argc, char* argv[])
         ImGui::SliderFloat("sliderFloat", &sliderFloat, -20.f, 20.f);
         ImGui::End();
 
-        //PhysicsEngine->SetGravity(sliderFloat);
+        PhysicsEngine->SetGravity(sliderFloat);
 
         prevTime = curTime;
 
