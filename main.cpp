@@ -66,17 +66,17 @@ int main(int argc, char* argv[])
     int* drawCallCount = &pute;
 
     bool Freelook = true;
-    glm::mat4 Model = glm::mat4(1.0f);
     std::vector<Object*> GameObjects;
     float xPos = 0;
-    float yPos = 2;
+    float yPos = 1;
     float zPos = 0;
+    float sphereRadius = .5f;
 
     BulletPhysics* PhysicsEngine = new BulletPhysics();
 
-    for (size_t i = 0; i < 10; i++)
+    for (size_t i = 0; i < 3; i++)
     {
-        if (i == 9)
+        if (i == 1)
         {
             //Create a plane object of name Plane
             Object* planeObject = new Object("Plane");
@@ -84,16 +84,16 @@ int main(int argc, char* argv[])
             PhysicsEngine->CreatePlane();
             //Parameter for the render of the plane
             std::vector<GLfloat> Vertices = {
-                -1000,0,1000,
-                -1000,0,-1000,
-                1000,0,-1000,
-                1000,0,1000
+                -5,0,5,
+                -5,0,-5,
+                5,0,-5,
+                5,0,5
             };
             std::vector<GLfloat> TexCoord = {
-                -1000, 1000,
-                -1000, -1000,
-                1000, -1000,
-                1000, 1000
+                -5, 5,
+                -5, -5,
+                5, -5,
+                5, 5
             };
             std::vector<unsigned int> Indices = {
                 0, 1, 2,
@@ -111,9 +111,9 @@ int main(int argc, char* argv[])
             //Create a sphere object of name Spherei
             Object* sphereObject = new Object("Sphere%d" + i);
             //Create the sphere in a physic way
-            PhysicsEngine->CreateSphere(1, xPos + i, yPos, zPos, 1.0f);
+            PhysicsEngine->CreateSphere(sphereRadius, xPos + i, yPos, zPos, 1.0f);
             //Create the parameter for the render of the sphere
-            SolidSphere* sphereParameter = new SolidSphere(1, 12, 24);
+            SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 12, 24);
             //Add them to a VertexAssembly
             VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
             //Create the Mesh with the parameter from the VertexAssembly and indices from 
@@ -210,27 +210,34 @@ int main(int argc, char* argv[])
         cam.SetProjection();
         
         glUseProgram(programID);;
-        /*
-        for (size_t i = 0; i < MeshesToBeDrawn.size(); i++)
-        {
-            pute += MeshesToBeDrawn[i]->Draw();
-        }
 
-        pute = pute / 3;*/
         for (size_t i = 0; i < GameObjects.size(); i++)
         {
             
             Mesh* MeshComponent = (Mesh*)GameObjects[i]->GetSpecificComponent(ComponentName::MESH_COMPONENT);
-            if (i == 9)
+            glm::mat4 Model = glm::mat4(1.0f);
+            if (i == 1)
             {
-                //Model *= MeshComponent->TransformMatrixPlane(PhysicsEngine->rigidbodies[i]);
+                glm::vec3 translationVector = vec3(MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i])[3].x,
+                                                    MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i])[3].y,
+                                                    MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i])[3].z);
+                Model = glm::translate(Model, translationVector);
+                printf("Plane X pos = %f\n", translationVector.x);
+                printf("Plane Y pos = %f\n", translationVector.y);
+                printf("Plane Z pos = %f\n", translationVector.z);
                 glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
                 glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
                 MeshComponent->DrawPlane();
             }
             else
             {
-                //Model *= MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i]);
+                glm::vec3 translationVector = vec3(MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i])[3].x, 
+                                                    MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i])[3].y,
+                                                    MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i])[3].z);
+                Model = glm::translate(Model, translationVector);
+                printf("Sphere%d X pos = %f\n", i, translationVector.x);
+                printf("Sphere%d Y pos = %f\n", i, translationVector.y);
+                printf("Sphere%d Z pos = %f\n", i, translationVector.z);
                 glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
                 glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
                 MeshComponent->DrawSphere();

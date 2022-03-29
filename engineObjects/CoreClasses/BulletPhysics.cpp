@@ -7,7 +7,7 @@ BulletPhysics::BulletPhysics()
 	overlappingPairCache = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver;
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-	dynamicsWorld->setGravity(btVector3(0, -10, 0));
+	dynamicsWorld->setGravity(btVector3(0, -100, 0));
 }
 
 BulletPhysics::~BulletPhysics()
@@ -54,7 +54,7 @@ void BulletPhysics::Update(float dt)
 	dynamicsWorld->stepSimulation(dt, 10);
 
 	//print positions of all objects
-	for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
+	/*for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
 	{
 		btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[j];
 		btRigidBody* body = btRigidBody::upcast(obj);
@@ -68,7 +68,7 @@ void BulletPhysics::Update(float dt)
 			trans = obj->getWorldTransform();
 		}
 		printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
-	}
+	}*/
 }
 
 void BulletPhysics::CreateBox(float xHalfSize, float yHalfSize, float zHalfSize, float xPos, float yPos, float zPos, float Mass)
@@ -119,8 +119,6 @@ void BulletPhysics::CreateSphere(float radius, float xPos, float yPos, float zPo
 	if (isDynamic)
 		colShape->calculateLocalInertia(mass, localInertia);
 
-	startTransform.setOrigin(btVector3(2, 10, 0));
-
 	//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
@@ -135,7 +133,7 @@ void BulletPhysics::CreatePlane()
 	btTransform startTransform;
 	startTransform.setIdentity();
 	startTransform.setOrigin(btVector3(0, -1, 0));
-	btStaticPlaneShape* plane = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
+	btStaticPlaneShape* plane = new btStaticPlaneShape(btVector3(0, -1, 0), 0);
 	btMotionState* motion = new btDefaultMotionState(startTransform);
 	btRigidBody::btRigidBodyConstructionInfo info(0.0, motion, plane);
 	btRigidBody* body = new btRigidBody(info);
