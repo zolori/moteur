@@ -226,6 +226,7 @@ int main(int argc, char* argv[])
                 case SDL_KEYUP:
                     switch (curEvent.key.keysym.sym)
                     {
+                        case SDLK_LALT:
                         case SDLK_LCTRL:
                             Freelook = true;
                         break;
@@ -321,12 +322,12 @@ int main(int argc, char* argv[])
         ImGui::LabelText("Triangles : ", "%d", var);
         ImGui::End();
 
-        static float sliderFloat = 0.f;
+        static float sliderFloat = -10.f;
         ImGui::Begin("Tools");
         ImGui::SliderFloat("sliderFloat", &sliderFloat, -20.f, 20.f);
         ImGui::End();
 
-        PhysicsEngine->SetGravity(sliderFloat);
+        //PhysicsEngine->SetGravity(sliderFloat);
 
         prevTime = curTime;
 

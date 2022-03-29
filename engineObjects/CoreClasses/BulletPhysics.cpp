@@ -7,7 +7,7 @@ BulletPhysics::BulletPhysics(float gravity)
 	overlappingPairCache = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver;
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-	dynamicsWorld->setGravity(btVector3(0, -100, 0));
+	dynamicsWorld->setGravity(btVector3(0, gravity, 0));
 }
 
 BulletPhysics::~BulletPhysics()
