@@ -164,11 +164,13 @@ int main(int argc, char* argv[])
                             Freelook = false;
                             break;
                         case SDLK_SPACE:
+                        {
                             //Create a sphere object of name Sphere
                             Object* sphereObject = new Object("Sphere");
                             //Create the sphere in a physic way
                             PhysicsEngine->CreateSphere(sphereRadius, cam.GetPosition().x, cam.GetPosition().y, cam.GetPosition().z, 1.0f);
-                            //PhysicsEngine->rigidbodies.back()->setLinearVelocity(btVector3(cam.get));
+                            btVector3 look = btVector3(cam.GetFront().x, cam.GetFront().y, cam.GetFront().z) * 20;
+                            PhysicsEngine->rigidbodies.back()->setLinearVelocity(look);
                             //Create the parameter for the render of the sphere
                             SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 12, 24);
                             //Add them to a VertexAssembly
@@ -179,6 +181,8 @@ int main(int argc, char* argv[])
                             sphereObject->AddComponent(sphereMesh);
                             //Put the sphere object in the vector housing all of them
                             GameObjects.push_back(sphereObject);
+                            break;
+                        }
                         default:
                             break;
                     }
@@ -240,8 +244,7 @@ int main(int argc, char* argv[])
             Model = glm::translate(Model, translationVector);
             glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
             glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-            if (i == 0)
+            if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE)
             {
                 MeshComponent->DrawPlane();
             }
