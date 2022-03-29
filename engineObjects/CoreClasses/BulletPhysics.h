@@ -6,7 +6,7 @@
 class BulletPhysics
 {
 public:
-	BulletPhysics(float gravity = -10.0f);
+	BulletPhysics();
 	~BulletPhysics();
 
 	void Update(float dt);
@@ -14,7 +14,6 @@ public:
 	void CreateBox(float xHalfSize, float yHalfSize, float zHalfSize, float xPos, float yPos, float zPos, float Mass);
 	void CreateSphere(float radius, float xPos, float yPos, float zPos, float Mass);
 	void CreatePlane();
-	void SetGravity(float gravity);
 	///collision configuration contains default setup for memory
 	btDefaultCollisionConfiguration* collisionConfiguration;
 	///use the default collision dispatcher.
@@ -29,6 +28,5 @@ public:
 	btAlignedObjectArray<btCollisionShape*> collisionShapes;
 
 	std::vector<btRigidBody*> rigidbodies;
-
 };
 
