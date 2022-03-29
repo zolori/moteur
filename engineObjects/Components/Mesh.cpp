@@ -33,14 +33,35 @@ int Mesh::Draw()
 
 glm::mat4 Mesh::TransformMatrix(btRigidBody* rb)
 {
-	float r = ((btSphereShape*)rb->getCollisionShape())->getRadius();
 	btTransform t;
 	rb->getMotionState()->getWorldTransform(t);
 	float mat[16];
 	glm::mat4 transformMatrix;
+	t.getOrigin();
+	t.getRotation();
 	t.getOpenGLMatrix(glm::value_ptr(transformMatrix));
 	return transformMatrix;
 }
+
+glm::quat Mesh::Rotation(btRigidBody* rb)
+{
+	glm::quat quaternion = glm::quat(rb->getCenterOfMassTransform().getRotation().w(),
+										rb->getCenterOfMassTransform().getRotation().x(),
+										rb->getCenterOfMassTransform().getRotation().y(),
+										rb->getCenterOfMassTransform().getRotation().z()
+	);
+	return quaternion;
+}
+
+glm::vec3 Mesh::Translation(btRigidBody* rb)
+{
+	glm::vec3 vector3 = glm::vec3(rb->getCenterOfMassTransform().getOrigin().x(),
+									rb->getCenterOfMassTransform().getOrigin().y(),
+									rb->getCenterOfMassTransform().getOrigin().z()
+	);
+	return vector3;
+}
+
 
 void Mesh::DrawSphere()
 {

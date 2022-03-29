@@ -28,6 +28,10 @@ public:
 	int Draw();
 	//Calculate the transformMatrix of a sphere
 	glm::mat4 TransformMatrix(btRigidBody* rb);
+	//Get Rotations
+	glm::quat Rotation(btRigidBody* rb);
+	//Get Translation
+	glm::vec3 Translation(btRigidBody* rb);
 	//Calculate the transformMatrix of a plane
 	//Draw a sphere;
 	void DrawSphere();

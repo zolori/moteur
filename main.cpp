@@ -168,7 +168,12 @@ int main(int argc, char* argv[])
                             //Create a sphere object of name Sphere
                             Object* sphereObject = new Object("Sphere");
                             //Create the sphere in a physic way
-                            PhysicsEngine->CreateSphere(sphereRadius, cam.GetPosition().x, cam.GetPosition().y, cam.GetPosition().z, 1.0f);
+                            PhysicsEngine->CreateSphere(sphereRadius, 
+                                                        cam.GetPosition().x + cam.GetFront().x, 
+                                                        cam.GetPosition().y + cam.GetFront().y, 
+                                                        cam.GetPosition().z + cam.GetFront().z,
+                                                        1.0f
+                            );
                             btVector3 look = btVector3(cam.GetFront().x, cam.GetFront().y, cam.GetFront().z) * 20;
                             PhysicsEngine->rigidbodies.back()->setLinearVelocity(look);
                             //Create the parameter for the render of the sphere
@@ -237,10 +242,8 @@ int main(int argc, char* argv[])
             
             Mesh* MeshComponent = (Mesh*)GameObjects[i]->GetSpecificComponent(ComponentName::MESH_COMPONENT);
             glm::mat4 Model = glm::mat4(1.0f);
-            glm::vec3 translationVector = vec3(MeshComponent->TransformMatrix(PhysicsEngine->rigidbodies[i])[3].x,
-            MeshComponent->TransformMatrix(PhysicsEngine->rigidbodies[i])[3].y,
-            MeshComponent->TransformMatrix(PhysicsEngine->rigidbodies[i])[3].z);
-            Model = glm::translate(Model, translationVector);
+            
+            Model = glm::translate(Model, MeshComponent->Translation(PhysicsEngine->rigidbodies[i]));
             glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
             glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
             if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE)
