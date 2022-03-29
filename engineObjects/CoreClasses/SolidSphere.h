@@ -9,14 +9,15 @@ class SolidSphere
 public:
 	SolidSphere(float radius, unsigned int rings, unsigned int sectors);
 
-	void Draw();
+	std::vector<GLfloat> GetVertices() { return vertices; }
+	std::vector<GLfloat> GetNormals() { return normals; }
+	std::vector<GLfloat> GetTexcoords() { return texcoords; }
+	std::vector<unsigned int> GetIndices() { return indices; }
 
 protected:
 	std::vector<GLfloat> vertices;
 	std::vector<GLfloat> normals;
 	std::vector<GLfloat> texcoords;
 	std::vector<unsigned int> indices;
-
-	unsigned int VAO;
 };
 

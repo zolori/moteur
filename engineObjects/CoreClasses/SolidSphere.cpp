@@ -38,19 +38,3 @@ SolidSphere::SolidSphere(float radius, unsigned int rings, unsigned int sectors)
         *i++ = (r + 1) * sectors + s;
     }
 }
-
-void SolidSphere::Draw()
-{
-    Buffer* VerticesBuffer = new Buffer(vertices, 0, 3);
-    VerticesBuffer->BindBuffer();
-    Buffer* NormalBuffer = new Buffer(normals, 1, 3);
-    NormalBuffer->BindBuffer();
-    Buffer* TexCoordBuffer = new Buffer(texcoords, 2, 2);
-    TexCoordBuffer->BindBuffer();
-    Buffer* ColorBuffer = new Buffer(vertices, 3, 3);
-    ColorBuffer->BindBuffer();
-
-    IndicesBuffer* indicesBuffer = new IndicesBuffer(indices);
-
-    glDrawElements(GL_QUADS, indices.size(), GL_UNSIGNED_INT, 0);
-}

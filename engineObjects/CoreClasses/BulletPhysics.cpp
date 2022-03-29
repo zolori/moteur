@@ -12,7 +12,7 @@ BulletPhysics::BulletPhysics()
 
 BulletPhysics::~BulletPhysics()
 {
-	for (size_t i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
+	for (int i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
 	{
 		btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
 		btRigidBody* body = btRigidBody::upcast(obj);
@@ -49,9 +49,9 @@ BulletPhysics::~BulletPhysics()
 	collisionShapes.clear();
 }
 
-void BulletPhysics::Update()
+void BulletPhysics::Update(float dt)
 {
-	dynamicsWorld->stepSimulation(1.f / 60.f, 10);
+	dynamicsWorld->stepSimulation(dt, 10);
 
 	//print positions of all objects
 	for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
@@ -97,6 +97,7 @@ void BulletPhysics::CreateBox(float xHalfSize, float yHalfSize, float zHalfSize,
 
 	//add the body to the dynamics world
 	dynamicsWorld->addRigidBody(body);
+	rigidbodies.push_back(body);
 }
 
 void BulletPhysics::CreateSphere(float radius, float xPos, float yPos, float zPos, float Mass)
@@ -126,4 +127,19 @@ void BulletPhysics::CreateSphere(float radius, float xPos, float yPos, float zPo
 	btRigidBody* body = new btRigidBody(rbInfo);
 
 	dynamicsWorld->addRigidBody(body);
+	rigidbodies.push_back(body);
+}
+
+void BulletPhysics::CreatePlane()
+{
+	btTransform startTransform;
+	startTransform.setIdentity();
+	startTransform.setOrigin(btVector3(0, -1, 0));
+	btStaticPlaneShape* plane = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
+	btMotionState* motion = new btDefaultMotionState(startTransform);
+	btRigidBody::btRigidBodyConstructionInfo info(0.0, motion, plane);
+	btRigidBody* body = new btRigidBody(info);
+	body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+	dynamicsWorld->addRigidBody(body);
+	rigidbodies.push_back(body);
 }
