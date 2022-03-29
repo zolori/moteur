@@ -123,14 +123,14 @@ void BulletPhysics::CreateSphere(float radius, float xPos, float yPos, float zPo
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
 	btRigidBody* body = new btRigidBody(rbInfo);
-
+	body->setRestitution(.9);
 	dynamicsWorld->addRigidBody(body);
 	rigidbodies.push_back(body);
 }
 
 void BulletPhysics::CreatePlane()
 {
-	btStaticPlaneShape* plane = new btStaticPlaneShape(btVector3(0, -1, 0), 0);
+	btStaticPlaneShape* plane = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
 	collisionShapes.push_back(plane);
 
 	btTransform startTransform;
@@ -141,7 +141,8 @@ void BulletPhysics::CreatePlane()
 	btMotionState* motion = new btDefaultMotionState(startTransform);
 	btRigidBody::btRigidBodyConstructionInfo info(0.0, motion, plane);
 	btRigidBody* body = new btRigidBody(info);
-
+	body->setRestitution(.9);
+	body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
 	dynamicsWorld->addRigidBody(body);
 	rigidbodies.push_back(body);
 }
