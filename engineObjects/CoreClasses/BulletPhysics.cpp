@@ -1,6 +1,6 @@
 #include "BulletPhysics.h"
 
-BulletPhysics::BulletPhysics()
+BulletPhysics::BulletPhysics(float gravity)
 {
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -142,4 +142,9 @@ void BulletPhysics::CreatePlane()
 	body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
 	dynamicsWorld->addRigidBody(body);
 	rigidbodies.push_back(body);
+}
+
+void BulletPhysics::SetGravity(float gravity)
+{
+	dynamicsWorld->setGravity(btVector3(0, gravity, 0));
 }

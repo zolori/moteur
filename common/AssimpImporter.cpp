@@ -71,10 +71,6 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene, const char* textureFile
 				printf("Blue: %f\n", scene->mMeshes[i]->mColors[0][j].b);
 			}
 		}
-		VertexAssembly* MeshVertices = new VertexAssembly(Pos,
-			Norm,
-			TexCoords,
-			Color);
 
 		std::vector<unsigned int> Indices;
 		for (size_t j = 0; j < scene->mMeshes[i]->mNumFaces; j++)
@@ -84,6 +80,13 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene, const char* textureFile
 				Indices.push_back(scene->mMeshes[i]->mFaces[j].mIndices[g]);
 			}
 		}
+
+		VertexAssembly* MeshVertices = new VertexAssembly(Pos,
+			Norm,
+			TexCoords,
+			Indices,
+			Color);
+
 		std::vector<Texture*> TextureVector;
 		if (scene->HasTextures())
 		{
@@ -104,7 +107,7 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene, const char* textureFile
 			}
 		}
 
-		MeshToDraw = new Mesh(MeshVertices, Indices, TextureVector);
+		MeshToDraw = new Mesh(MeshVertices, TextureVector);
 
 		if (scene->HasMaterials() && curMesh.mMaterialIndex < scene->mNumMaterials)
 		{

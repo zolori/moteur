@@ -5,7 +5,7 @@ class VertexAssembly
 public:
 	/**
 	* Constructor of the VertexAssembly class
-	* 
+	*
 	* @param Position A vector containing all the positions (X Y Z)
 	* @param Normal A vector containing all the normals (X Y Z)
 	* @param Texcoord A vector containg all the texture coordinates (U V)
@@ -36,4 +36,3 @@ private:
 
 	std::vector<unsigned int> indices;
 };
-

@@ -131,8 +131,6 @@ int main(int argc, char* argv[])
     float yPos = 2;
     float zPos = 0;
 
-    BulletPhysics* PhysicsEngine = new BulletPhysics();
-
     for (size_t i = 0; i < 10; i++)
     {
         if (i == 9)
@@ -216,6 +214,7 @@ int main(int argc, char* argv[])
                             apprunning = SDL_FALSE;
                             break;
 
+                        case SDLK_LALT:
                         case SDLK_LCTRL:
                             Freelook = false;
                             break;
@@ -299,13 +298,24 @@ int main(int argc, char* argv[])
         ImGui::NewFrame();
         // Draw some widgets
 
-        float elapsedSeconds = Time.GetDeltaTime();
+        // Arrete d'enlever ça, ta technique avec GetDeltaTime ne marche pas
+        auto curTime = steady_clock::now();
+        duration<float> elapsedSeconds = curTime - prevTime;
 
         ImGui::Begin("Perfs");
-        ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds * 1e-3);
+        ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
+        ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
         ImGui::LabelText("Triangles : ", "%d", var);
-        ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds);
         ImGui::End();
+
+        static float sliderFloat = 0.f;
+        ImGui::Begin("Tools");
+        ImGui::SliderFloat("sliderFloat", &sliderFloat, -20.f, 20.f);
+        ImGui::End();
+
+        PhysicsEngine->SetGravity(sliderFloat);
+
+        prevTime = curTime;
 
 
         //Rendering end
@@ -315,7 +325,7 @@ int main(int argc, char* argv[])
         var = 0;
 
         SDL_GL_SwapWindow(win);
-        PhysicsEngine->Update(elapsedSeconds);
+        PhysicsEngine->Update(elapsedSeconds.count());
     }
 
     ImGui_ImplOpenGL3_Shutdown();
