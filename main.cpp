@@ -230,8 +230,7 @@ int main(int argc, char* argv[])
 
         cam.SetView();
         cam.SetProjection();
-        
-        glUseProgram(programID);;
+       
 
         for (size_t i = 0; i < GameObjects.size(); i++)
         {
@@ -253,6 +252,8 @@ int main(int argc, char* argv[])
                 MeshComponent->DrawSphere();
             }
         }
+
+        glUseProgram(programID);
 
         //Render Loop
         ImGui_ImplOpenGL3_NewFrame();
