@@ -3,6 +3,7 @@
 #include "../CoreClasses/Texture.h"
 #include "../CoreClasses/VertexAssembly.h"
 #include "../CoreClasses/IndicesBuffer.h"
+#include "../CoreClasses/BulletPhysics.h"
 
 #include <vector>
 class Mesh : public Component
@@ -18,17 +19,22 @@ public:
 	* @param A vector filled with instances of the Texture class containing the mesh textures.
 	* By default empty
 	*/
-	Mesh(VertexAssembly* Vertices, std::vector<unsigned int> Indices, std::vector<Texture*> Textures = std::vector<Texture*>());
+	Mesh(VertexAssembly* Vertices, std::vector<Texture*> Textures = std::vector<Texture*>());
 	//Destructor of the Mesh class
 	~Mesh();
 	/**
 	* Draw the elements of the mesh
 	*/
-	void Draw();
+	int Draw();
+	//Calculate the transformMatrix of a sphere
+	glm::mat4 TransformMatrix(btRigidBody* rb);
+	//Calculate the transformMatrix of a plane
+	//Draw a sphere;
+	void DrawSphere();
+	//Draw a plane;
+	void DrawPlane();
 	//Attribute
-
 	VertexAssembly* vertices;
-	std::vector<unsigned int> indices;
 	std::vector<Texture*> textures;
 
 	//Pure virtual method of Component overriden
@@ -41,6 +47,7 @@ private:
 	Buffer* PosBuffer;
 	Buffer* NormBuffer;
 	Buffer* TexcoordBuffer;
+	Buffer* ColorBuffer;
 	IndicesBuffer* IndiceBuffer;
 	/**
 	* Setup the VAO buffer as well as the Position, Normal, TextureCoordinate and Indice buffer

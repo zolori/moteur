@@ -11,9 +11,8 @@ Camera::Camera(SDL_Window* NewWin)
     Position = glm::vec3(1, 2, 5);
     Front = glm::vec3(0, 0, -1.0f);
     Up = glm::vec3(0, 1, 0);
-    Model = glm::mat4(1.0f);
     win = NewWin;
-    SetProjectionParameters(45.0f, 1024, 728, 0.1f, 100.0f);
+    SetProjectionParameters(45.0f, 1024, 728, 0.1f, 500.0f);
 }
 
 void Camera::f()
@@ -125,12 +124,6 @@ void Camera::SetView()
 {
     View = lookAt(Position, Position + Front, Up);
 }
-
-void Camera::SetMVP()
-{
-    MVP = Projection * View * Model;
-}
-
 vec3 Camera::GetPosition()
 {
     return Position;
@@ -146,12 +139,14 @@ vec3 Camera::GetFront()
     return Front;
 }
 
-mat4 Camera::GetMVP()
+mat4 Camera::GetProjection()
 {
-    this->SetProjection();
-    this->SetView();
-    this->SetMVP();
-    return MVP;
+    return Projection;
+}
+
+mat4 Camera::GetView()
+{
+    return View;
 }
 
 mat4 Camera::GetModel()

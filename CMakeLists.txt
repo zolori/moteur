@@ -46,19 +46,23 @@ add_executable(moteur
 	engineObjects/CoreClasses/VertexAssembly.cpp
 	engineObjects/CoreClasses/Texture.h
 	engineObjects/CoreClasses/Texture.cpp
+	engineObjects/CoreClasses/SolidSphere.h
+	engineObjects/CoreClasses/SolidSphere.cpp
+	engineObjects/CoreClasses/BulletPhysics.h
+	engineObjects/CoreClasses/BulletPhysics.cpp
 	engineObjects/Component.h
 	engineObjects/Component.cpp
 	engineObjects/ComponentName.h
 	engineObjects/Object.h
 	engineObjects/Object.cpp
-	engineObjects/Components/Transform.h
-	engineObjects/Components/Transform.cpp
 	engineObjects/Components/Mesh.h
 	engineObjects/Components/Mesh.cpp
 	engineObjects/Components/Camera.h
 	engineObjects/Components/Camera.cpp
 	engineObjects/Components/Light.hpp
 	engineObjects/Components/Light.cpp
+	engineObjects/Components/Transform.h
+	engineObjects/Components/Transform.cpp
 )
 
 add_dependencies(moteur copy_shaders)
