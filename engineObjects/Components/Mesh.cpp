@@ -31,25 +31,11 @@ int Mesh::Draw()
 	return vertices->GetIndices().size();
 }
 
-glm::mat4 Mesh::TransformMatrixSphere(btRigidBody* sphere)
+glm::mat4 Mesh::TransformMatrix(btRigidBody* rb)
 {
-	if (sphere->getCollisionShape()->getShapeType() != SPHERE_SHAPE_PROXYTYPE)
-		return glm::mat4();
-	float r = ((btSphereShape*)sphere->getCollisionShape())->getRadius();
+	float r = ((btSphereShape*)rb->getCollisionShape())->getRadius();
 	btTransform t;
-	sphere->getMotionState()->getWorldTransform(t);
-	float mat[16];
-	glm::mat4 transformMatrix;
-	t.getOpenGLMatrix(glm::value_ptr(transformMatrix));
-	return transformMatrix;
-}
-
-glm::mat4 Mesh::TransformMatrixPlane(btRigidBody* plane)
-{
-	if (plane->getCollisionShape()->getShapeType() != STATIC_PLANE_PROXYTYPE)
-		return glm::mat4();
-	btTransform t;
-	plane->getMotionState()->getWorldTransform(t);
+	rb->getMotionState()->getWorldTransform(t);
 	float mat[16];
 	glm::mat4 transformMatrix;
 	t.getOpenGLMatrix(glm::value_ptr(transformMatrix));

@@ -27,9 +27,8 @@ public:
 	*/
 	int Draw();
 	//Calculate the transformMatrix of a sphere
-	glm::mat4 TransformMatrixSphere(btRigidBody* sphere);
+	glm::mat4 TransformMatrix(btRigidBody* rb);
 	//Calculate the transformMatrix of a plane
-	glm::mat4 TransformMatrixPlane(btRigidBody* plane);
 	//Draw a sphere;
 	void DrawSphere();
 	//Draw a plane;
