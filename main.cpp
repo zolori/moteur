@@ -51,6 +51,9 @@ int main(int argc, char* argv[])
 
     GLuint programID = LoadShaders(vertex_file_path.c_str(), fragment_file_path.c_str());
 
+    auto beginTime = steady_clock::now();
+    auto prevTime = steady_clock::now();
+
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -68,15 +71,15 @@ int main(int argc, char* argv[])
     bool Freelook = true;
     std::vector<Object*> GameObjects;
     float xPos = 0;
-    float yPos = 1;
+    float yPos = 5;
     float zPos = 0;
     float sphereRadius = .5f;
 
     BulletPhysics* PhysicsEngine = new BulletPhysics();
 
-    for (size_t i = 0; i < 3; i++)
+    for (size_t i = 0; i < 10; i++)
     {
-        if (i == 1)
+        if (i == 0)
         {
             //Create a plane object of name Plane
             Object* planeObject = new Object("Plane");
@@ -111,7 +114,7 @@ int main(int argc, char* argv[])
             //Create a sphere object of name Spherei
             Object* sphereObject = new Object("Sphere%d" + i);
             //Create the sphere in a physic way
-            PhysicsEngine->CreateSphere(sphereRadius, xPos + i, yPos, zPos, 1.0f);
+            PhysicsEngine->CreateSphere(sphereRadius, xPos + i, yPos, zPos + i, 1.0f);
             //Create the parameter for the render of the sphere
             SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 12, 24);
             //Add them to a VertexAssembly
@@ -160,7 +163,22 @@ int main(int argc, char* argv[])
                         case SDLK_LCTRL:
                             Freelook = false;
                             break;
-
+                        case SDLK_SPACE:
+                            //Create a sphere object of name Sphere
+                            Object* sphereObject = new Object("Sphere");
+                            //Create the sphere in a physic way
+                            PhysicsEngine->CreateSphere(sphereRadius, cam.GetPosition().x, cam.GetPosition().y, cam.GetPosition().z, 1.0f);
+                            //PhysicsEngine->rigidbodies.back()->setLinearVelocity(btVector3(cam.get));
+                            //Create the parameter for the render of the sphere
+                            SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 12, 24);
+                            //Add them to a VertexAssembly
+                            VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
+                            //Create the Mesh with the parameter from the VertexAssembly and indices from 
+                            Mesh* sphereMesh = new Mesh(sphereVertexAssembly);
+                            //add it to the sphereObject
+                            sphereObject->AddComponent(sphereMesh);
+                            //Put the sphere object in the vector housing all of them
+                            GameObjects.push_back(sphereObject);
                         default:
                             break;
                     }
@@ -216,30 +234,19 @@ int main(int argc, char* argv[])
             
             Mesh* MeshComponent = (Mesh*)GameObjects[i]->GetSpecificComponent(ComponentName::MESH_COMPONENT);
             glm::mat4 Model = glm::mat4(1.0f);
-            if (i == 1)
+            glm::vec3 translationVector = vec3(MeshComponent->TransformMatrix(PhysicsEngine->rigidbodies[i])[3].x,
+            MeshComponent->TransformMatrix(PhysicsEngine->rigidbodies[i])[3].y,
+            MeshComponent->TransformMatrix(PhysicsEngine->rigidbodies[i])[3].z);
+            Model = glm::translate(Model, translationVector);
+            glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
+            glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+            if (i == 0)
             {
-                glm::vec3 translationVector = vec3(MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i])[3].x,
-                                                    MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i])[3].y,
-                                                    MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i])[3].z);
-                Model = glm::translate(Model, translationVector);
-                printf("Plane X pos = %f\n", translationVector.x);
-                printf("Plane Y pos = %f\n", translationVector.y);
-                printf("Plane Z pos = %f\n", translationVector.z);
-                glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
-                glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
                 MeshComponent->DrawPlane();
             }
             else
             {
-                glm::vec3 translationVector = vec3(MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i])[3].x, 
-                                                    MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i])[3].y,
-                                                    MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i])[3].z);
-                Model = glm::translate(Model, translationVector);
-                printf("Sphere%d X pos = %f\n", i, translationVector.x);
-                printf("Sphere%d Y pos = %f\n", i, translationVector.y);
-                printf("Sphere%d Z pos = %f\n", i, translationVector.z);
-                glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
-                glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
                 MeshComponent->DrawSphere();
             }
         }
@@ -251,23 +258,23 @@ int main(int argc, char* argv[])
         ImGui::NewFrame();
         // Draw some widgets
 
-        float elapsedSeconds = Time.GetDeltaTime();
+        auto curTime = steady_clock::now();
+        duration<float> elapsedSeconds = curTime - prevTime;
 
         ImGui::Begin("Perfs");
         //ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
         ImGui::LabelText("Triangles : ", "%d", pute);
-        ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds);
+        ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
         ImGui::End();
 
+        prevTime = curTime;
 
         //Rendering end
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        pute = 0;
-
         SDL_GL_SwapWindow(win);
-        PhysicsEngine->Update(elapsedSeconds);
+        PhysicsEngine->Update(elapsedSeconds.count());
     }
 
     ImGui_ImplOpenGL3_Shutdown();
