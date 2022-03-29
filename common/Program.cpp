@@ -73,9 +73,9 @@ void Program::SetUpUniformLights(int numberOfLights)
     {
         newPt = currentPt;
         newPt.insert(12, std::to_string(i));
+        AddUniformVar((newPt + ".color").c_str());
         AddUniformVar((newPt + ".position").c_str());
-        AddUniformVar((newPt + ".LightParam_Color").c_str());
-        AddUniformVar((newPt + ".LightParam_Power").c_str());
+        AddUniformVar((newPt + ".power").c_str());
     }
 }
 
@@ -84,7 +84,53 @@ void Program::UpdateLights(std::vector<Light*> objectLights)
     
     int i;
     int gap = 4;
-    int index = 1;
+    int index = 0;
+ 
+    /*
+    for (int i = 0; i < uniformVariable.size(); i++)
+    {
+        std::cout << i << ": " << uniformVariable[i] << std::endl;
+    }
+    
+    GLuint p0Color = glGetUniformLocation(num, (newPt+".color").c_str());
+    GLuint p0Position = glGetUniformLocation(num, (newPt + ".position").c_str());
+    GLuint p0Power = glGetUniformLocation(num, (newPt + ".power").c_str());
+
+    SetVector(p0Color, objectLights[0]->GetLightColor());
+    SetVector(p0Position, objectLights[0]->GetLightPosition());
+    SetFloat(p0Power, objectLights[0]->GetLightPower());
+
+    std::string testPt = "pointLights[1]";*/
+
+    /*
+    GLuint p1Color = glGetUniformLocation(num, (testPt + ".color").c_str());
+    GLuint p1Position = glGetUniformLocation(num, (testPt + ".position").c_str());
+    GLuint p1Power = glGetUniformLocation(num, (testPt + ".power").c_str());
+
+    SetVector(p1Color, objectLights[1]->GetLightColor());
+    SetVector(p1Position, objectLights[1]->GetLightPosition());
+    SetFloat(p1Power, objectLights[1]->GetLightPower());
+
+    
+    std::string test2Pt = "pointLights[2]";
+
+    GLuint p3Color = glGetUniformLocation(num, (test2Pt + ".color").c_str());
+    GLuint p3Position = glGetUniformLocation(num, (test2Pt + ".position").c_str());
+    GLuint p3Power = glGetUniformLocation(num, (test2Pt + ".power").c_str());
+
+    SetVector(p3Color, objectLights[2]->GetLightColor());
+    SetVector(p3Position, objectLights[2]->GetLightPosition());
+    SetFloat(p3Power, objectLights[2]->GetLightPower());
+    */
+
+    /*
+    SetVector(uniformVariable[4], objectLights[0]->GetLightPosition());
+    SetFloat(uniformVariable[5], objectLights[0]->GetLightPower());
+    SetVector(uniformVariable[6], objectLights[0]->GetLightColor());
+
+    SetVector(uniformVariable[7], objectLights[1]->GetLightColor());
+    SetVector(uniformVariable[9], objectLights[1]->GetLightPosition());
+    SetFloat(uniformVariable[8], objectLights[1]->GetLightPower());*/
 
    
     for (i=0; i < objectLights.size(); i++)
@@ -92,35 +138,10 @@ void Program::UpdateLights(std::vector<Light*> objectLights)
         index += 3;
         int index1 = index + 1;
         int index2 = index + 2;
-        /*
-        std::cout << index << std::endl;
-        std::cout << index1 << std::endl;
-        std::cout << index2 << std::endl;*/
-
-        float x = objectLights[i]->GetLightPosition().x;
-        float y = objectLights[i]->GetLightPosition().y;
-        float z = objectLights[i]->GetLightPosition().z;
-        
-        float x1 = objectLights[i]->GetLightColor().x;
-        float y1 = objectLights[i]->GetLightColor().y;
-        float z1 = objectLights[i]->GetLightColor().z;
-
-        std::cout << "objectLights[" << i << "] -> " <<
-            "light[" << index << "].light_color = " << x1 << "," << y1 << "," << z1 << std::endl;
-
-        std::cout << "objectLights[" << i << "] -> " << 
-            "light["<< index2 << "].position = " << x << "," << y << "," << z << std::endl;
-
-        std::cout << "objectLights[" << i << "] -> " <<
-              "light[" << index1 << "].light_power = " << objectLights[i]->GetLightPower() << std::endl;
-    
+     
         SetVector(uniformVariable[index], objectLights[i]->GetLightColor());
-
-        SetVector(uniformVariable[index2], objectLights[i]->GetLightPosition());
-
-        SetFloat(uniformVariable[index1], objectLights[i]->GetLightPower());
-       
-      
-    }
+        SetVector(uniformVariable[index1], objectLights[i]->GetLightPosition());
+        SetFloat(uniformVariable[index2], objectLights[i]->GetLightPower());
+    }  
 }
 

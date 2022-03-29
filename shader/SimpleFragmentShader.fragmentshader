@@ -9,18 +9,18 @@ in vec3 LightDirection_cameraspace;
 
 // Ouput data
 out vec4 color;
-
-#define LightNumber 2
+#define LightNumber 6
 struct PointLight 
 {    
-    vec3 position;
-	vec3 LightParam_Color;
-	float LightParam_Power;
+	vec3 color;
+    	vec3 position;
+	float power;
 };  
 
 // Values that stay constant for the whole mesh.
 uniform sampler2D myTextureSampler;
 uniform PointLight pointLights[LightNumber];
+
 vec3 CalculatePointLight(PointLight pt);
 
 void main(){
@@ -28,19 +28,19 @@ void main(){
 
 	vec3 result = vec3(0.0);
 	int i;
-	for(i=0;i<2;i++)
+	for(i=0;i<LightNumber ;i++)
 	{
 		result += CalculatePointLight(pointLights[i]); 
 	}
+	//result += CalculatePointLight(pointLights[0]);
 	color = vec4(result, 1.0);
 }
 
 vec3 CalculatePointLight(PointLight pt)
 {
-	//vec3 test = vec3(0.0);
 	// Light emission properties
-	vec3 LightColor = pt.LightParam_Color;
-	float LightPower = pt.LightParam_Power;
+	vec3 LightColor = pt.color;
+	float LightPower = pt.power;
 	
 	// Material properties
 	vec3 MaterialDiffuseColor = texture( myTextureSampler, UV ).rgb;
