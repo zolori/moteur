@@ -38,7 +38,6 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene, const char* textureFile
 			Pos.push_back(scene->mMeshes[i]->mVertices[j].z);
 		}
 
-
 		std::vector<GLfloat> Norm;
 
 		for (size_t j = 0; j < scene->mMeshes[i]->mNumVertices; j++)
@@ -125,8 +124,8 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene, const char* textureFile
 		}
 
 		MeshesToDraw.push_back(MeshToDraw);
-	}
-	return MeshesToDraw;
+    }
+    return MeshesToDraw;
 }
 
 

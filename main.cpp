@@ -5,6 +5,8 @@
 #include "common/Header.h"
 #include "engineObjects/CoreClasses/BulletPhysics.h"
 #include "engineObjects/CoreClasses/SolidSphere.h"
+#include "engineObjects/Object.h"
+#include "engineObjects/CoreClasses/VertexAssembly.h"
 
 #define SDL_WIDTH 1024
 #define SDL_HEIGHT 728
@@ -107,6 +109,7 @@ int main(int argc, char* argv[])
     
 
     SolidSphere sphere(1, 12, 24);
+
     //Camera Setup
     Camera cam = Camera(win);
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
@@ -122,7 +125,64 @@ int main(int argc, char* argv[])
     int* drawCallCount = &var;
 
     bool Freelook = true;
+    glm::mat4 Model = glm::mat4(1.0f);
+    std::vector<Object*> GameObjects;
+    float xPos = 0;
+    float yPos = 2;
+    float zPos = 0;
 
+    BulletPhysics* PhysicsEngine = new BulletPhysics();
+
+    for (size_t i = 0; i < 10; i++)
+    {
+        if (i == 9)
+        {
+            //Create a plane object of name Plane
+            Object* planeObject = new Object("Plane");
+            //Create the plane in a physic way
+            PhysicsEngine->CreatePlane();
+            //Parameter for the render of the plane
+            std::vector<GLfloat> Vertices = {
+                -1000,0,1000,
+                -1000,0,-1000,
+                1000,0,-1000,
+                1000,0,1000
+            };
+            std::vector<GLfloat> TexCoord = {
+                -1000, 1000,
+                -1000, -1000,
+                1000, -1000,
+                1000, 1000
+            };
+            std::vector<unsigned int> Indices = {
+                0, 1, 2,
+                0, 2, 3
+            };
+            VertexAssembly* planeVertexAssembly = new VertexAssembly(Vertices, Vertices, TexCoord, Indices, Vertices);
+            //Create the Mesh
+            Mesh* planeMesh = new Mesh(planeVertexAssembly);
+            //Add it to the planeObject
+            planeObject->AddComponent(planeMesh);
+            GameObjects.push_back(planeObject);
+        }
+        else
+        {
+            //Create a sphere object of name Spherei
+            Object* sphereObject = new Object("Sphere%d" + i);
+            //Create the sphere in a physic way
+            PhysicsEngine->CreateSphere(1, xPos + i, yPos, zPos, 1.0f);
+            //Create the parameter for the render of the sphere
+            SolidSphere* sphereParameter = new SolidSphere(1, 12, 24);
+            //Add them to a VertexAssembly
+            VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
+            //Create the Mesh with the parameter from the VertexAssembly and indices from 
+            Mesh* sphereMesh = new Mesh(sphereVertexAssembly);
+            //add it to the sphereObject
+            sphereObject->AddComponent(sphereMesh);
+            //Put the sphere object in the vector housing all of them
+            GameObjects.push_back(sphereObject);
+        }
+    }
     while (apprunning)
     {
         float deltaTime = Time.GetDeltaTime();
@@ -206,22 +266,31 @@ int main(int argc, char* argv[])
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
 
+        cam.SetView();
+        cam.SetProjection();
+
         glUseProgram(programID);
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &cam.GetMVP()[0][0]);
         
-        for (size_t i = 0; i < MeshesToBeDrawn.size(); i++)
+
+        for (size_t i = 0; i < GameObjects.size(); i++)
         {
-            var += MeshesToBeDrawn[i]->Draw();
+            
+            Mesh* MeshComponent = (Mesh*)GameObjects[i]->GetSpecificComponent(ComponentName::MESH_COMPONENT);
+            if (i == 9)
+            {
+                //Model *= MeshComponent->TransformMatrixPlane(PhysicsEngine->rigidbodies[i]);
+                glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
+                glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+                MeshComponent->DrawPlane();
+            }
+            else
+            {
+                //Model *= MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i]);
+                glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
+                glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+                MeshComponent->DrawSphere();
+            }
         }
-
-        var = var / 3;
-        
-        
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, cubeIndiceBufferData.size(), GL_UNSIGNED_INT, 0);
-        PhysicsEngine->Update();
-
-        sphere.Draw();
 
         //Render Loop
         ImGui_ImplOpenGL3_NewFrame();
@@ -230,16 +299,14 @@ int main(int argc, char* argv[])
         ImGui::NewFrame();
         // Draw some widgets
 
-        auto curTime = steady_clock::now();
-        duration<float> elapsedSeconds = curTime - prevTime;
+        float elapsedSeconds = Time.GetDeltaTime();
 
         ImGui::Begin("Perfs");
-        ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
+        ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds * 1e-3);
         ImGui::LabelText("Triangles : ", "%d", var);
-        ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
+        ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds);
         ImGui::End();
 
-        prevTime = curTime;
 
         //Rendering end
         ImGui::Render();
@@ -248,12 +315,18 @@ int main(int argc, char* argv[])
         var = 0;
 
         SDL_GL_SwapWindow(win);
+        PhysicsEngine->Update(elapsedSeconds);
     }
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
-
+    PhysicsEngine->~BulletPhysics();
+    for (size_t i = 0; i < GameObjects.size(); i++)
+    {
+        Mesh* MeshComponent = (Mesh*)GameObjects[i]->GetSpecificComponent(ComponentName::MESH_COMPONENT);
+        MeshComponent->~Mesh();
+    }
     //delete scene;
     return 0;
 }

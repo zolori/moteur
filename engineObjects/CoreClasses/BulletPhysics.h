@@ -1,17 +1,19 @@
 #pragma once
 #include "btBulletDynamicsCommon.h"
+#include "../../common/Header.h"
 #include <stdio.h>
+#include <vector>
 class BulletPhysics
 {
 public:
 	BulletPhysics();
 	~BulletPhysics();
 
-	void Update();
+	void Update(float dt);
 
 	void CreateBox(float xHalfSize, float yHalfSize, float zHalfSize, float xPos, float yPos, float zPos, float Mass);
 	void CreateSphere(float radius, float xPos, float yPos, float zPos, float Mass);
-
+	void CreatePlane();
 	///collision configuration contains default setup for memory
 	btDefaultCollisionConfiguration* collisionConfiguration;
 	///use the default collision dispatcher.
@@ -24,5 +26,7 @@ public:
 	btDiscreteDynamicsWorld* dynamicsWorld;
 
 	btAlignedObjectArray<btCollisionShape*> collisionShapes;
+
+	std::vector<btRigidBody*> rigidbodies;
 };
 

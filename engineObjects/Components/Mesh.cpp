@@ -1,9 +1,8 @@
 #include "Mesh.h"
 
-Mesh::Mesh(VertexAssembly* Vertices, std::vector<unsigned int> Indices, std::vector<Texture*> Textures)
+Mesh::Mesh(VertexAssembly* Vertices, std::vector<Texture*> Textures)
 {
 	vertices = Vertices;
-	indices = Indices;
 	textures = Textures;
 
 	name = ComponentName::MESH_COMPONENT;
@@ -28,9 +27,48 @@ int Mesh::Draw()
 	for (size_t i = 0; i < textures.size(); i++)
 		textures[i]->useIMG(i);
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-	return indices.size();
+	glDrawElements(GL_TRIANGLES, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
+	return vertices->GetIndices().size();
 }
+
+glm::mat4 Mesh::TransformMatrixSphere(btRigidBody* sphere)
+{
+	if (sphere->getCollisionShape()->getShapeType() != SPHERE_SHAPE_PROXYTYPE)
+		return glm::mat4();
+	float r = ((btSphereShape*)sphere->getCollisionShape())->getRadius();
+	btTransform t;
+	sphere->getMotionState()->getWorldTransform(t);
+	float mat[16];
+	glm::mat4 transformMatrix;
+	t.getOpenGLMatrix(glm::value_ptr(transformMatrix));
+	return transformMatrix;
+}
+
+glm::mat4 Mesh::TransformMatrixPlane(btRigidBody* plane)
+{
+	if (plane->getCollisionShape()->getShapeType() != STATIC_PLANE_PROXYTYPE)
+		return glm::mat4();
+	btTransform t;
+	plane->getMotionState()->getWorldTransform(t);
+	float mat[16];
+	glm::mat4 transformMatrix;
+	t.getOpenGLMatrix(glm::value_ptr(transformMatrix));
+	return transformMatrix;
+}
+
+void Mesh::DrawSphere()
+{
+	glBindVertexArray(VAO);
+	glDrawElements(GL_QUADS, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
+}
+
+void Mesh::DrawPlane()
+{
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
+}
+
+
 
 void Mesh::setupMesh()
 {
@@ -47,5 +85,5 @@ void Mesh::setupMesh()
 	TexcoordBuffer->BindBuffer();
 	ColorBuffer->BindBuffer();
 
-	IndiceBuffer = new IndicesBuffer(indices);
+	IndiceBuffer = new IndicesBuffer(vertices->GetIndices());
 }

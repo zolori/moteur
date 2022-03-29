@@ -29,7 +29,7 @@ class Camera : Component {
 
 	mat4 Projection;
 	mat4 View;
-	mat4 Model = glm::mat4(1.0f);
+	
 	mat4 MVP;
 
 	float Fov;
@@ -67,10 +67,10 @@ public:
 	void SetProjectionParameters(float NewFov, float NewRatioWidth, float NewRatioHeight, float NewNearClipping, float NewFarClipping);
 	void SetProjection();
 	void SetView();
-	void SetMVP();
 	//Getters
 	vec3 GetPosition();
 	vec3 GetRight();
 	vec3 GetFront();
-	mat4 GetMVP();
+	mat4 GetProjection();
+	mat4 GetView();
 };
