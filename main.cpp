@@ -51,78 +51,22 @@ int main(int argc, char* argv[])
 
     GLuint programID = LoadShaders(vertex_file_path.c_str(), fragment_file_path.c_str());
 
+    auto beginTime = steady_clock::now();
+    auto prevTime = steady_clock::now();
+
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    
-    std::vector<Mesh*> MeshesToBeDrawn;
-    std::string mesh_path = FindFile("assets", "Pool.fbx");
-    const aiScene* scene = DoTheImport(mesh_path.c_str());
-    if (scene != nullptr)
-    {
-        MeshesToBeDrawn = SceneProcessing(scene);
-    }
-    
-    GLuint VAO;
-
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
-
-    BulletPhysics* PhysicsEngine = new BulletPhysics();
-
-    float cubeWidth = 1.0f;
-    float cubeHeight = 1.0f;
-    float cubeDepth = 1.0f;
-
-    std::vector<float> cubePosBufferData = {
-        cubeWidth, cubeHeight, cubeDepth,
-        -cubeWidth, cubeHeight, cubeDepth,
-        cubeWidth, -cubeHeight, cubeDepth,
-        -cubeWidth, -cubeHeight, cubeDepth,
-        cubeWidth, cubeHeight, -cubeDepth,
-        -cubeWidth, cubeHeight, -cubeDepth,
-        cubeWidth, -cubeHeight, -cubeDepth,
-        -cubeWidth, -cubeHeight, -cubeDepth,
-    };
-
-    Buffer* cubeBufferPos = new Buffer(cubePosBufferData, 0, 3);
-    cubeBufferPos->BindBuffer();
-    PhysicsEngine->CreateBox(cubeWidth, cubeHeight, cubeDepth, cubeWidth, cubeHeight, cubeDepth, 0.1f);
-
-    std::vector<unsigned int> cubeIndiceBufferData = {
-        0,1,2,
-        3,2,1,
-        4,0,6,
-        6,0,2,
-        5,1,4,
-        4,1,0,
-        7,3,1,
-        7,1,5,
-        5,4,7,
-        7,4,6,
-        7,2,3,
-        7,6,2
-    };
-
-    IndicesBuffer* cubeBufferIndices = new IndicesBuffer(cubeIndiceBufferData);
-    
-
-    SolidSphere sphere(1, 12, 24);
-
     //Camera Setup
     Camera cam = Camera(win);
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
     int x, y;
-
-    struct DeltaTime Time;
-    SDL_ShowCursor(SDL_DISABLE);
-
-    auto beginTime = steady_clock::now();
-    auto prevTime = steady_clock::now();
-    int var = 0;
-    int* drawCallCount = &var;
+    //glEnable(GL_CULL_FACE);
+    DeltaTime Time;
+    //SDL_ShowCursor(SDL_DISABLE);
+    int pute = 0;
+    int* drawCallCount = &pute;
 
     bool Freelook = true;
     std::vector<Object*> GameObjects;
@@ -131,6 +75,7 @@ int main(int argc, char* argv[])
     float zPos = 0;
     float sphereRadius = .5f;
 
+    BulletPhysics* PhysicsEngine = new BulletPhysics();
 
     for (size_t i = 0; i < 10; i++)
     {
@@ -216,7 +161,6 @@ int main(int argc, char* argv[])
                             break;
 
                         case SDLK_LALT:
-                        case SDLK_LCTRL:
                             Freelook = false;
                             break;
                         case SDLK_SPACE:
@@ -225,7 +169,8 @@ int main(int argc, char* argv[])
                             Object* sphereObject = new Object("Sphere");
                             //Create the sphere in a physic way
                             PhysicsEngine->CreateSphere(sphereRadius, cam.GetPosition().x, cam.GetPosition().y, cam.GetPosition().z, 1.0f);
-                            //PhysicsEngine->rigidbodies.back()->setLinearVelocity(btVector3(cam.get));
+                            btVector3 look = btVector3(cam.GetFront().x, cam.GetFront().y, cam.GetFront().z) * 20;
+                            PhysicsEngine->rigidbodies.back()->setLinearVelocity(look);
                             //Create the parameter for the render of the sphere
                             SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 12, 24);
                             //Add them to a VertexAssembly
@@ -245,7 +190,6 @@ int main(int argc, char* argv[])
                 case SDL_KEYUP:
                     switch (curEvent.key.keysym.sym)
                     {
-                        case SDLK_LALT:
                         case SDLK_LCTRL:
                             Freelook = true;
                         break;
@@ -283,13 +227,11 @@ int main(int argc, char* argv[])
 
         glClearColor(0.0, 0.0, 0.4f, 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
 
         cam.SetView();
         cam.SetProjection();
-
-
-        glUseProgram(programID);
+        
+        glUseProgram(programID);;
 
         for (size_t i = 0; i < GameObjects.size(); i++)
         {
@@ -302,8 +244,7 @@ int main(int argc, char* argv[])
             Model = glm::translate(Model, translationVector);
             glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
             glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-            if (i == 0)
+            if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE)
             {
                 MeshComponent->DrawPlane();
             }
@@ -324,14 +265,14 @@ int main(int argc, char* argv[])
         duration<float> elapsedSeconds = curTime - prevTime;
 
         ImGui::Begin("Perfs");
+        //ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
+        ImGui::LabelText("Triangles : ", "%d", pute);
         ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
-        ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
-        ImGui::LabelText("Triangles : ", "%d", var);
         ImGui::End();
 
         static float sliderFloat = -10.f;
         ImGui::Begin("Tools");
-        ImGui::SliderFloat("sliderFloat", &sliderFloat, -20.f, 20.f);
+        ImGui::SliderFloat("Gravity", &sliderFloat, -20.f, 20.f);
         ImGui::End();
 
         PhysicsEngine->SetGravity(sliderFloat);
@@ -341,8 +282,6 @@ int main(int argc, char* argv[])
         //Rendering end
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        var = 0;
 
         SDL_GL_SwapWindow(win);
         PhysicsEngine->Update(elapsedSeconds.count());
