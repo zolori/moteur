@@ -223,14 +223,14 @@ int main(int argc, char* argv[])
             Mesh* MeshComponent = (Mesh*)GameObjects[i]->GetSpecificComponent(ComponentName::MESH_COMPONENT);
             if (i == 9)
             {
-                Model *= MeshComponent->TransformMatrixPlane(PhysicsEngine->rigidbodies[i]);
+                //Model *= MeshComponent->TransformMatrixPlane(PhysicsEngine->rigidbodies[i]);
                 glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
                 glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
                 MeshComponent->DrawPlane();
             }
             else
             {
-                Model *= MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i]);
+                //Model *= MeshComponent->TransformMatrixSphere(PhysicsEngine->rigidbodies[i]);
                 glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
                 glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
                 MeshComponent->DrawSphere();
