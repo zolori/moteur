@@ -30,9 +30,9 @@ public:
 	glm::mat4 TransformMatrix(btRigidBody* rb);
 	//Calculate the transformMatrix of a plane
 	//Draw a sphere;
-	void DrawSphere();
+	int DrawSphere();
 	//Draw a plane;
-	void DrawPlane();
+	int DrawPlane();
 	//Attribute
 	VertexAssembly* vertices;
 	std::vector<Texture*> textures;

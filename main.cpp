@@ -65,8 +65,8 @@ int main(int argc, char* argv[])
 	//glEnable(GL_CULL_FACE);
 	DeltaTime Time;
 	//SDL_ShowCursor(SDL_DISABLE);
-	int pute = 0;
-	int* drawCallCount = &pute;
+	int var = 0;
+	int* drawCallCount = &var;
 
 	bool Freelook = true;
 	std::vector<Object*> GameObjects;
@@ -250,11 +250,11 @@ int main(int argc, char* argv[])
 			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 			if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE)
 			{
-				MeshComponent->DrawPlane();
+				var += MeshComponent->DrawPlane();
 			}
 			else
 			{
-				MeshComponent->DrawSphere();
+				var += MeshComponent->DrawSphere();
 			}
 		}
 
@@ -268,9 +268,10 @@ int main(int argc, char* argv[])
 		auto curTime = steady_clock::now();
 		duration<float> elapsedSeconds = curTime - prevTime;
 
+
 		ImGui::Begin("Perfs");
 		//ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
-		ImGui::LabelText("Triangles : ", "%d", pute);
+		ImGui::LabelText("Triangles : ", "%d", var);
 		ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
 		ImGui::End();
 
@@ -286,6 +287,8 @@ int main(int argc, char* argv[])
 		//Rendering end
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		var = 0;
 
 		SDL_GL_SwapWindow(win);
 		PhysicsEngine->Update(elapsedSeconds.count());
