@@ -17,6 +17,8 @@ public:
 	void SetVector(GLuint uniform, vec3 vector);
 	void SetMatrix4(GLuint uniform, GLsizei count, GLboolean transpose, const GLfloat* value);
 
+	void BindTexture(GLuint texture, uint unit);
+
 	//Specific functions
 	void BindTexture(GLuint texture);
 

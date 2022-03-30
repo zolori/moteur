@@ -44,9 +44,9 @@ void Program::SetMatrix4(GLuint uniform, GLsizei count, GLboolean transpose, con
 
 }
 
-void Program::BindTexture(GLuint texture)
+void Program::BindTexture(GLuint texture, uint unit)
 {
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, texture);
     glUniform1i(uniformVariable[3], 0);
 }

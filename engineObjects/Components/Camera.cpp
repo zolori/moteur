@@ -47,7 +47,7 @@ void Camera::CameraInputKey(CameraMovement DIR, float deltaTime)
         break;
     }
     //SetFront();
-   // std::cout << glm::to_string(Position) << std::endl;
+   std::cout << glm::to_string(Position) << std::endl;
 }
 
 void Camera::CameraInputMouse(int x, int y, float deltaTime)

@@ -9,6 +9,7 @@
 #include "engineObjects/CoreClasses/SolidSphere.h"
 #include "engineObjects/Object.h"
 #include "engineObjects/CoreClasses/VertexAssembly.h"
+#include "engineObjects/CoreClasses/Texture.h"
 
 
 #define SDL_WIDTH 1024
@@ -53,7 +54,7 @@ int main(int argc, char* argv[])
     glewInit();
     //Light Setup
     std::vector<Light*> objectLights;
-    Light* light1 = new Light("light1", vec3(-1.0, 5.0, 2.0), vec3(1.0, 0.0, 1.0), 50.0f);
+    Light* light1 = new Light("light1", vec3(-10.0, 5.0, 2.0), vec3(1.0, 0.0, 1.0), 50.0f);
     Light* light2 = new Light("light2",vec3(0.0, 5.0, 2.0), vec3(0.5, 1.0, 1.0), 100.0f);
     Light* light3 = new Light("light3", vec3(-2.0, 4.0, 2.0), vec3(0.25, 0.75, 0), 70.0f);
     Light* light4 = new Light("light4", vec3(2, 5, 2), vec3(0.15, 1, 0.65), 100.0f);
@@ -73,20 +74,22 @@ int main(int argc, char* argv[])
     }
 
     Program prog1 = Program(SHADER_DIRECTORY, VERTEX_SHADER, FRAGMENT_SHADER, objectLights.size());
-    std::string texture_path = FindFile("assets", "Bob_Blue.png");
+    std::string texture_path = FindFile("assets", "Stone 01_1K_Diffuse.png");
+    std::string texture_path_sphere = FindFile("assets", "Cobblestone_Bump.jpg");
+
     GLuint Texture = loadDDS(texture_path.c_str());
+    GLuint Texture2 = loadDDS(texture_path_sphere.c_str());
     prog1.AddUniformVar("myTextureSampler");
-
-    //Mesh To Draw Setup
-    std::vector<Mesh*> MeshesToBeDrawn;
-    std::string mesh_path = FindFile("assets", "Bob.fbx");
-    const aiScene* scene = DoTheImport(mesh_path.c_str());
-    if (scene != nullptr)
-    {
-        MeshesToBeDrawn = SceneProcessing(scene);
-    }
-  
-
+   // Texture* tex = new Texture();
+    //tex->loadIMG(texture_path_plane.c_str());
+   // std::vector<Texture*> lesTexMex;
+    //lesTexMex.push_back(tex);
+    //Texture* tex2 = new Texture();
+    //std::string texture_path_sphere = FindFile("assets", "Cobblestone_Bump.jpg");
+    //printf(texture_path_sphere.c_str());
+    //tex2->loadIMG(texture_path_sphere.c_str());
+   // std::vector<Texture*> lesTexMexEpices;
+    //lesTexMexEpices.push_back(tex2);s
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -96,7 +99,7 @@ int main(int argc, char* argv[])
     int x, y;
     bool Freelook = true;
 
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     //DeltaTime Setup
     auto beginTime = steady_clock::now();
     auto prevTime = steady_clock::now();
@@ -106,7 +109,6 @@ int main(int argc, char* argv[])
     float newLightPower = 0.0f;
     vec3 newLightPosition = vec3(0.0, 0.0, 0.0);
     float currentLightColor[3]{};
-
 
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     const ImVec2 base_pos = viewport->Pos;
@@ -287,21 +289,23 @@ int main(int argc, char* argv[])
             prog1.UpdateCamera(&MVP[0][0], &Model[0][0], &cam.GetView()[0][0]);
             if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE)
             {
-                printf("Pos Plane x : %f", translationVector.x);
-                printf("Pos Plane y : %f", translationVector.y);
-                printf("Pos Plane z : %f", translationVector.z);
+
                 MeshComponent->DrawPlane();
+
             }
-            else
+           else
             {
                 MeshComponent->DrawSphere();
             }
         }
 
+
         prog1.Use();
-        prog1.BindTexture(Texture);
+        prog1.BindTexture(Texture,0);
+        prog1.BindTexture(Texture2,1); 
         prog1.UpdateLights(objectLights);
         
+        //DisplayUniform(prog1.GetNum());
 
         //Render Loop
         ImGui_ImplOpenGL3_NewFrame();
@@ -342,7 +346,7 @@ int main(int argc, char* argv[])
         {
             //Update light position
             newLightPosition = objectLights[index]->GetLightPosition();
-            ImGui::SliderFloat("Light Position X", &newLightPosition.x, -15.0f, 15.0f);
+            ImGui::SliderFloat("Light Position X", &newLightPosition.x, -100.0f, 100.0f);
             ImGui::SliderFloat("Light Position Y", &newLightPosition.y, -15.0f, 15.0f);
             ImGui::SliderFloat("Light Position Z", &newLightPosition.z, -15.0f, 15.0f);
             objectLights[index]->SetLightPosition(newLightPosition);
@@ -364,7 +368,7 @@ int main(int argc, char* argv[])
         }
         ImGui::EndChild();
         ImGui::End();
-
+        ImGui::SetNextWindowPos(ImVec2(base_pos.x + 10, base_pos.y + 110), ImGuiCond_Always);
         //Gravity Window
         static float sliderFloat = -10.f;
         ImGui::Begin("Tools");
