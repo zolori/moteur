@@ -7,6 +7,7 @@
 #include "engineObjects/CoreClasses/SolidSphere.h"
 #include "engineObjects/Object.h"
 #include "engineObjects/CoreClasses/VertexAssembly.h"
+#include <random>
 
 #define SDL_WIDTH 1024
 #define SDL_HEIGHT 728
@@ -68,16 +69,19 @@ int main(int argc, char* argv[])
     int pute = 0;
     int* drawCallCount = &pute;
 
-    bool Freelook = true;
+    bool Freelook = false;
     std::vector<Object*> GameObjects;
-    float xPos = 0;
-    float yPos = 5;
-    float zPos = 0;
     float sphereRadius = .5f;
+
+    std::random_device rd; // obtain a random number from hardware
+    std::mt19937 gen(rd()); // seed the generator
+    std::uniform_int_distribution<> distrX(-50, 50); // define the range
+    std::uniform_int_distribution<> distrZ(-50, 50);
+    std::uniform_int_distribution<> distrY(10, 50);
 
     BulletPhysics* PhysicsEngine = new BulletPhysics();
 
-    for (size_t i = 0; i < 10; i++)
+    for (size_t i = 0; i < 5001; i++)
     {
         if (i == 0)
         {
@@ -114,9 +118,9 @@ int main(int argc, char* argv[])
             //Create a sphere object of name Spherei
             Object* sphereObject = new Object("Sphere%d" + i);
             //Create the sphere in a physic way
-            PhysicsEngine->CreateSphere(sphereRadius, xPos + i, yPos, zPos + i, 1.0f);
+            PhysicsEngine->CreateSphere(sphereRadius, (float) distrX(gen), (float) distrY(gen), (float) distrZ(gen), 1.0f);
             //Create the parameter for the render of the sphere
-            SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 12, 24);
+            SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 8, 10);
             //Add them to a VertexAssembly
             VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
             //Create the Mesh with the parameter from the VertexAssembly and indices from 
@@ -161,7 +165,7 @@ int main(int argc, char* argv[])
                             break;
 
                         case SDLK_LALT:
-                            Freelook = false;
+                            Freelook = true;
                             break;
                         case SDLK_SPACE:
                         {
@@ -177,7 +181,7 @@ int main(int argc, char* argv[])
                             btVector3 look = btVector3(cam.GetFront().x, cam.GetFront().y, cam.GetFront().z) * 20;
                             PhysicsEngine->rigidbodies.back()->setLinearVelocity(look);
                             //Create the parameter for the render of the sphere
-                            SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 12, 24);
+                            SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 8, 12);
                             //Add them to a VertexAssembly
                             VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
                             //Create the Mesh with the parameter from the VertexAssembly and indices from 
@@ -195,8 +199,8 @@ int main(int argc, char* argv[])
                 case SDL_KEYUP:
                     switch (curEvent.key.keysym.sym)
                     {
-                        case SDLK_LCTRL:
-                            Freelook = true;
+                        case SDLK_LALT:
+                            Freelook = false;
                         break;
                     }
                     break;
@@ -242,8 +246,17 @@ int main(int argc, char* argv[])
             
             Mesh* MeshComponent = (Mesh*)GameObjects[i]->GetSpecificComponent(ComponentName::MESH_COMPONENT);
             glm::mat4 Model = glm::mat4(1.0f);
-            
+            glm::quat quaternionRotation = MeshComponent->Rotation(PhysicsEngine->rigidbodies[i]);
+            float halfTheta = acos(quaternionRotation.w);
+            vec3 axis (1, 0, 0);
+            if (abs(halfTheta) > FLT_EPSILON)
+            {
+                float sinHalfTheta = sin(halfTheta);
+                axis = vec3(quaternionRotation.x, quaternionRotation.y, quaternionRotation.z);
+                axis *= 1.0 / sinHalfTheta;
+            }
             Model = glm::translate(Model, MeshComponent->Translation(PhysicsEngine->rigidbodies[i]));
+            Model *= mat4(quaternionRotation);
             glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
             glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
             if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE)
