@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 	DeltaTime Time;
 	//SDL_ShowCursor(SDL_DISABLE);
 	int var = 0;
-	int* drawCallCount = &var;
+	int nbBall = 0;
 
 	bool Freelook = true;
 	std::vector<Object*> GameObjects;
@@ -125,6 +125,7 @@ int main(int argc, char* argv[])
 			sphereObject->AddComponent(sphereMesh);
 			//Put the sphere object in the vector housing all of them
 			GameObjects.push_back(sphereObject);
+			nbBall++;
 		}
 	}
 	while (apprunning)
@@ -185,6 +186,7 @@ int main(int argc, char* argv[])
 					sphereObject->AddComponent(sphereMesh);
 					//Put the sphere object in the vector housing all of them
 					GameObjects.push_back(sphereObject);
+					nbBall++;
 					break;
 				}
 				default:
@@ -270,13 +272,14 @@ int main(int argc, char* argv[])
 
 
 		ImGui::Begin("Perfs");
-		//ImGui::LabelText("Frame Time (ms) : ", "%f", elapsedSeconds.count() * 1e-3);
-		ImGui::LabelText("Triangles : ", "%d", var);
-		ImGui::LabelText("FPS : ", "%f", 1.0 / elapsedSeconds.count());
+		ImGui::LabelText(" : Frame Time (ms)", "%f"" : Frame Time (ms)", elapsedSeconds.count() * 1e-3);
+		ImGui::LabelText(" : FPS", "%f", 1.0 / elapsedSeconds.count());
 		ImGui::End();
 
 		static float sliderFloat = -10.f;
 		ImGui::Begin("Tools");
+		ImGui::LabelText(" : Triangles", "%d", var);
+		ImGui::LabelText(" : Nb de BOULE", "%d", nbBall);
 		ImGui::SliderFloat("Gravity", &sliderFloat, -50.f, 30.f);
 		ImGui::End();
 
