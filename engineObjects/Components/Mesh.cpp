@@ -22,30 +22,39 @@ Mesh::~Mesh()
 	delete IndiceBuffer;
 }
 
-
-glm::mat4 Mesh::TransformMatrix(btRigidBody* rb)
+glm::quat Mesh::Rotation(btRigidBody* rb)
 {
-	float r = ((btSphereShape*)rb->getCollisionShape())->getRadius();
-	btTransform t;
-	rb->getMotionState()->getWorldTransform(t);
-	float mat[16];
-	glm::mat4 transformMatrix;
-	t.getOpenGLMatrix(glm::value_ptr(transformMatrix));
-	return transformMatrix;
+	glm::quat quaternion = glm::quat(rb->getCenterOfMassTransform().getRotation().w(),
+										rb->getCenterOfMassTransform().getRotation().x(),
+										rb->getCenterOfMassTransform().getRotation().y(),
+										rb->getCenterOfMassTransform().getRotation().z()
+	);
+	return quaternion;
 }
 
-void Mesh::DrawSphere()
+glm::vec3 Mesh::Translation(btRigidBody* rb)
+{
+	glm::vec3 vector3 = glm::vec3(rb->getCenterOfMassTransform().getOrigin().x(),
+									rb->getCenterOfMassTransform().getOrigin().y(),
+									rb->getCenterOfMassTransform().getOrigin().z()
+	);
+	return vector3;
+}
+
+int Mesh::DrawSphere()
 {
 	texture->useIMG(0);
 	glBindVertexArray(VAO);
 	glDrawElements(GL_QUADS, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
+	return (vertices->GetIndices().size() * 2); // il y a 2 tr
 }
 
-void Mesh::DrawPlane()
+int Mesh::DrawPlane()
 {
 	texture->useIMG(0);
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
+	return vertices->GetIndices().size();
 }
 
 
