@@ -62,17 +62,18 @@ glm::vec3 Mesh::Translation(btRigidBody* rb)
 	return vector3;
 }
 
-
-void Mesh::DrawSphere()
+int Mesh::DrawSphere()
 {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_QUADS, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
+	return (vertices->GetIndices().size() * 2); // il y a 2 tr
 }
 
-void Mesh::DrawPlane()
+int Mesh::DrawPlane()
 {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
+	return vertices->GetIndices().size();
 }
 
 

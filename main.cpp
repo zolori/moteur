@@ -18,25 +18,25 @@ using namespace glm;
 
 SDL_Window* SetUpWindow()
 {
-    SDL_Window* win;
-    SDL_SetMainReady();
-    SDL_Init(SDL_INIT_VIDEO);
-    uint32_t windowsFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
-    win = SDL_CreateWindow("Engine",
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WIDTH,
-        SDL_HEIGHT,
-        windowsFlags);
+	SDL_Window* win;
+	SDL_SetMainReady();
+	SDL_Init(SDL_INIT_VIDEO);
+	uint32_t windowsFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+	win = SDL_CreateWindow("Engine",
+		SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED,
+		SDL_WIDTH,
+		SDL_HEIGHT,
+		windowsFlags);
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    SDL_GLContext context = SDL_GL_CreateContext(win);
-    SDL_GL_MakeCurrent(win, context);
-    glewInit();
-    return win;
+	SDL_GLContext context = SDL_GL_CreateContext(win);
+	SDL_GL_MakeCurrent(win, context);
+	glewInit();
+	return win;
 }
 
 int main(int argc, char* argv[])
@@ -66,9 +66,6 @@ int main(int argc, char* argv[])
     //glEnable(GL_CULL_FACE);
     DeltaTime Time;
     //SDL_ShowCursor(SDL_DISABLE);
-    int pute = 0;
-    int* drawCallCount = &pute;
-
     bool Freelook = false;
     std::vector<Object*> GameObjects;
     float sphereRadius = .5f;
