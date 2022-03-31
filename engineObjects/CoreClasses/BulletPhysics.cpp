@@ -81,10 +81,6 @@ void BulletPhysics::CreateBox(float xHalfSize, float yHalfSize, float zHalfSize,
 	groundTransform.setIdentity();
 	groundTransform.setOrigin(btVector3(xPos, yPos, zPos));
 	btQuaternion Rotation = btQuaternion(xRota, yRota, zRota, wRota);
-	printf("x quaternion : %f\n", Rotation.x());
-	printf("y quaternion : %f\n", Rotation.y());
-	printf("z quaternion : %f\n", Rotation.z());
-	printf("w quaternion : %f\n", Rotation.w());
 	groundTransform.setRotation(Rotation);
 
 	btScalar mass(Mass);
