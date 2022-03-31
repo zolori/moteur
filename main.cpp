@@ -123,7 +123,7 @@ Object* wallBoundaries(BulletPhysics* PhysicsEngine, Texture* tex, VertexAssembl
 	//Create the box in a physic way
 	PhysicsEngine->CreateBox(15, 5, 2, posX, posY, posZ, rotaX, rotaY, rotaZ, rotaW, 0);
 	//Create the Mesh
-	Mesh* boxMesh = new Mesh(boxVertexAssembly);
+	Mesh* boxMesh = new Mesh(boxVertexAssembly,tex);
 	box->AddComponent(boxMesh);
 	return box;
 }
@@ -134,7 +134,7 @@ Object* groundBoundaries(BulletPhysics* PhysicsEngine, Texture* tex, VertexAssem
 	//Create the box in a physic way
 	PhysicsEngine->CreateBox(15, 1, 15, posX, posY, posZ, rotaX, rotaY, rotaZ, rotaW, 0);
 	//Create the Mesh
-	Mesh* boxMesh = new Mesh(boxVertexAssembly);
+	Mesh* boxMesh = new Mesh(boxVertexAssembly,tex);
 	box->AddComponent(boxMesh);
 	return box;
 }
