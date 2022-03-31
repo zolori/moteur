@@ -19,7 +19,7 @@ public:
 	* @param A vector filled with instances of the Texture class containing the mesh textures.
 	* By default empty
 	*/
-	Mesh(VertexAssembly* Vertices, std::vector<Texture*> Textures = std::vector<Texture*>());
+	Mesh(VertexAssembly* Vertices, Texture* Texture = new Texture());
 	//Destructor of the Mesh class
 	~Mesh();
 	//Get Rotations
@@ -33,7 +33,7 @@ public:
 	int DrawPlane();
 	//Attribute
 	VertexAssembly* vertices;
-	std::vector<Texture*> textures;
+	Texture* texture;
 
 	//Pure virtual method of Component overriden
 	inline void f() override { printf("virtual function overriden"); }

@@ -3,18 +3,26 @@
 #include "engineObjects/Components/Camera.h"
 #include "common/functions.hpp"
 #include "common/Header.h"
+#include "engineObjects/Components/Light.hpp"
+#include "common/Program.hpp"
 #include "engineObjects/CoreClasses/BulletPhysics.h"
 #include "engineObjects/CoreClasses/SolidSphere.h"
 #include "engineObjects/Object.h"
 #include "engineObjects/CoreClasses/VertexAssembly.h"
+#include "engineObjects/CoreClasses/Texture.h"
+#include "common/stb_image.h"
 #include <random>
+
 
 #define SDL_WIDTH 1024
 #define SDL_HEIGHT 728
+#define SHADER_DIRECTORY "shader"
+#define VERTEX_SHADER "SimpleVertexShader.vertexshader"
+#define FRAGMENT_SHADER "SimpleFragmentShader.fragmentshader"
 
 using namespace std;
 using namespace glm;
-
+   
 
 SDL_Window* SetUpWindow()
 {
@@ -41,16 +49,45 @@ SDL_Window* SetUpWindow()
 
 int main(int argc, char* argv[])
 {
+
 	SDL_Window* win = SetUpWindow();
 	SDL_bool apprunning = SDL_TRUE;
 
 	ImGuiIO& io = initApp(win);
 	glewInit();
 
-	std::string vertex_file_path = FindFile("shader", "SimpleVertexShader.vertexshader");
-	std::string  fragment_file_path = FindFile("shader", "SimpleFragmentShader.fragmentshader");
+    std::vector<Light*> objectLights;
+    Light* light1 = new Light("light1", vec3(-10.0, 5.0, 2.0), vec3(1.0, 0.0, 1.0), 100.0f);
+    Light* light2 = new Light("light2", vec3(0.0, 5.0, 2.0), vec3(0.5, 1.0, 1.0), 50.0f);
+    Light* light3 = new Light("light3", vec3(-2.0, 4.0, 2.0), vec3(0.25, 0.75, 0), 60.0f);
+    Light* light4 = new Light("light4", vec3(2, 5, 2), vec3(0.15, 1, 0.65), 75.0f);
+    Light* light5 = new Light("light5", vec3(-2, 5, 2), vec3(1, .45, 0.35), 42.0f);
+    Light* light6 = new Light("light6", vec3(2, 5, 2), vec3(0.5, .56, .89), 37.0f);
+    const char* lights[6]{};
+    objectLights.push_back(light1);
+    objectLights.push_back(light2);
+    objectLights.push_back(light3);
+    objectLights.push_back(light4);
+    objectLights.push_back(light5);
+    objectLights.push_back(light6);
 
-	GLuint programID = LoadShaders(vertex_file_path.c_str(), fragment_file_path.c_str());
+    for (int i = 0; i < objectLights.size(); i++)
+    {
+        lights[i] = objectLights[i]->GetName();
+    }
+
+    Program prog1 = Program(SHADER_DIRECTORY, VERTEX_SHADER, FRAGMENT_SHADER, objectLights.size());
+    std::string texture_path_plane = FindFile("assets", "Stone 01_1K_Diffuse.png");
+    std::string texture_path_sphere = FindFile("assets", "Cobblestone_Bump.jpg");
+
+
+    prog1.AddUniformVar("myTextureSampler");
+    prog1.AddUniformVar("myTextureSampler2");
+
+    Texture* tex1 = new Texture();
+    Texture* tex2 = new Texture();
+    tex1->loadIMG(texture_path_plane.c_str());
+    tex2->loadIMG(texture_path_sphere.c_str());
 
 	auto beginTime = steady_clock::now();
 	auto prevTime = steady_clock::now();
@@ -60,7 +97,6 @@ int main(int argc, char* argv[])
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	//Camera Setup
 	Camera cam = Camera(win);
-	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
 	int x, y;
 	//glEnable(GL_CULL_FACE);
@@ -72,6 +108,15 @@ int main(int argc, char* argv[])
 	bool Freelook = false;
 	std::vector<Object*> GameObjects;
 	float sphereRadius = .5f;
+
+    int index = 0;
+    bool isActive = true;
+    float newLightPower = 0.0f;
+    vec3 newLightPosition = vec3(0.0, 0.0, 0.0);
+    float currentLightColor[3]{};
+
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    const ImVec2 base_pos = viewport->Pos;
 
 	std::random_device rd; // obtain a random number from hardware
 	std::mt19937 gen(rd()); // seed the generator
@@ -108,7 +153,7 @@ int main(int argc, char* argv[])
 			};
 			VertexAssembly* planeVertexAssembly = new VertexAssembly(Vertices, Vertices, TexCoord, Indices, Vertices);
 			//Create the Mesh
-			Mesh* planeMesh = new Mesh(planeVertexAssembly);
+			Mesh* planeMesh = new Mesh(planeVertexAssembly,tex1);
 			//Add it to the planeObject
 			planeObject->AddComponent(planeMesh);
 			GameObjects.push_back(planeObject);
@@ -124,7 +169,7 @@ int main(int argc, char* argv[])
 			//Add them to a VertexAssembly
 			VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
 			//Create the Mesh with the parameter from the VertexAssembly and indices from 
-			Mesh* sphereMesh = new Mesh(sphereVertexAssembly);
+			Mesh* sphereMesh = new Mesh(sphereVertexAssembly,tex2);
 			//add it to the sphereObject
 			sphereObject->AddComponent(sphereMesh);
 			//Put the sphere object in the vector housing all of them
@@ -191,7 +236,7 @@ int main(int argc, char* argv[])
 					//Add them to a VertexAssembly
 					VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
 					//Create the Mesh with the parameter from the VertexAssembly and indices from 
-					Mesh* sphereMesh = new Mesh(sphereVertexAssembly);
+					Mesh* sphereMesh = new Mesh(sphereVertexAssembly,tex2);
 					//add it to the sphereObject
 					sphereObject->AddComponent(sphereMesh);
 					//Put the sphere object in the vector housing all of them
@@ -257,8 +302,8 @@ int main(int argc, char* argv[])
 			Model = glm::translate(Model, MeshComponent->Translation(PhysicsEngine->rigidbodies[i]));
 			Model *= mat4(quaternionRotation);
 			glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
-			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-			if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE)
+            prog1.UpdateCamera(&MVP[0][0], &Model[0][0], &cam.GetView()[0][0]);
+            if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE)
 			{
 				var += MeshComponent->DrawPlane();
 			}
@@ -268,7 +313,8 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		glUseProgram(programID);
+        prog1.Use();
+        prog1.UpdateLights(objectLights);
 
 		//Render Loop
 		ImGui_ImplOpenGL3_NewFrame();
@@ -284,6 +330,48 @@ int main(int argc, char* argv[])
 		ImGui::LabelText(" : Frame Time (ms)", "%f"" : Frame Time (ms)", elapsedSeconds.count() * 1e-3);
 		ImGui::LabelText(" : FPS", "%f", 1.0 / elapsedSeconds.count());
 		ImGui::End();
+
+        //Light Window
+        ImGui::SetNextWindowPos(ImVec2(base_pos.x + 10, base_pos.y + 125), ImGuiCond_Always);
+        ImGui::Begin("Lights");
+        ImGui::Combo("Lights", &index, lights, IM_ARRAYSIZE(lights));
+        ImGui::BeginChild("Selected light Parameters", ImVec2(0.0, 0.0), true, ImGuiWindowFlags_None);
+        //Light general info
+        ImGui::Text("%s", lights[index]);
+        isActive = objectLights[index]->GetActive();
+        ImGui::Checkbox("Active", &isActive);
+        objectLights[index]->SetActive(isActive);
+
+        //Light Parameters
+        ImGui::Text("Parameters", "");
+        if (isActive)
+        {
+            //Update light position
+            newLightPosition = objectLights[index]->GetLightPosition();
+            ImGui::SliderFloat("Light Position X", &newLightPosition.x, -100.0f, 100.0f);
+            ImGui::SliderFloat("Light Position Y", &newLightPosition.y, -15.0f, 15.0f);
+            ImGui::SliderFloat("Light Position Z", &newLightPosition.z, -15.0f, 15.0f);
+            objectLights[index]->SetLightPosition(newLightPosition);
+            ImGui::Separator();
+
+            //Update light Color
+            currentLightColor[0] = objectLights[index]->GetLightColor().x;
+            currentLightColor[1] = objectLights[index]->GetLightColor().y;
+            currentLightColor[2] = objectLights[index]->GetLightColor().z;
+            ImGui::ColorEdit3("Light Color", currentLightColor, 0);
+            ImGui::Separator();
+            objectLights[index]->SetLightColor(vec3(currentLightColor[0], currentLightColor[1], currentLightColor[2]));
+
+            //Update light power
+            newLightPower = objectLights[index]->GetLightPower();
+            ImGui::SliderFloat("Light Power", &newLightPower, 1.0f, 100.0f);
+            objectLights[index]->SetLightPower(newLightPower);
+
+        }
+        ImGui::EndChild();
+        ImGui::End();
+        ImGui::SetNextWindowPos(ImVec2(base_pos.x + 10, base_pos.y + 110), ImGuiCond_Always);
+
 
 		static float sliderFloat = -10.f;
 		ImGui::Begin("Tools");

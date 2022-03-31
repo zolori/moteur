@@ -8,7 +8,6 @@ using Clock = std::chrono::high_resolution_clock;
 using Timestamp = Clock::time_point;
 using Duration = Clock::duration;
 
-//std::filesystem::path appPath;
 
 struct DeltaTime {
     Timestamp currentTime;
@@ -16,10 +15,14 @@ struct DeltaTime {
     float deltaTime;
     Duration duration;
     float GetDeltaTime();
+    std::chrono::duration<float> GetDuration();
 };
 
 std::string FindFile(const char* directory, const char* name);
 SDL_Window* SetUpWindow();
+GLuint loadDDS(const char* imagepath);
 std::string_view GetAppPath();
 GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
 ImGuiIO& initApp(SDL_Window* win);
+
+void DisplayUniform(GLuint program);

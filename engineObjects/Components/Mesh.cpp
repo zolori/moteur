@@ -1,9 +1,9 @@
 #include "Mesh.h"
 
-Mesh::Mesh(VertexAssembly* Vertices, std::vector<Texture*> Textures)
+Mesh::Mesh(VertexAssembly* Vertices, Texture* Texture)
 {
 	vertices = Vertices;
-	textures = Textures;
+	texture = Texture;
 
 	name = ComponentName::MESH_COMPONENT;
 
@@ -21,6 +21,7 @@ Mesh::~Mesh()
 	delete TexcoordBuffer;
 	delete IndiceBuffer;
 }
+
 glm::quat Mesh::Rotation(btRigidBody* rb)
 {
 	glm::quat quaternion = glm::quat(rb->getCenterOfMassTransform().getRotation().w(),
@@ -42,6 +43,7 @@ glm::vec3 Mesh::Translation(btRigidBody* rb)
 
 int Mesh::DrawSphere()
 {
+	texture->useIMG(0);
 	glBindVertexArray(VAO);
 	glDrawElements(GL_QUADS, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
 	return (vertices->GetIndices().size() * 2); // il y a 2 tr
@@ -49,6 +51,7 @@ int Mesh::DrawSphere()
 
 int Mesh::DrawPlane()
 {
+	texture->useIMG(0);
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
 	return vertices->GetIndices().size();

@@ -36,6 +36,8 @@ add_executable(moteur
 	common/AssimpImporter.cpp
 	common/Header.h
 	common/stb_image.h
+	common/Program.hpp
+	common/Program.cpp
 	engineObjects/CoreClasses/Buffer.h
 	engineObjects/CoreClasses/Buffer.cpp
 	engineObjects/CoreClasses/IndicesBuffer.h
@@ -57,6 +59,8 @@ add_executable(moteur
 	engineObjects/Components/Mesh.cpp
 	engineObjects/Components/Camera.h
 	engineObjects/Components/Camera.cpp
+	engineObjects/Components/Light.hpp
+	engineObjects/Components/Light.cpp
 	engineObjects/Components/Transform.h
 	engineObjects/Components/Transform.cpp
 )
