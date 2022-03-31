@@ -47,6 +47,61 @@ SDL_Window* SetUpWindow()
 	return win;
 }
 
+Object* boxBoundaries(std::vector<Object*> vectorPtr, BulletPhysics* PhysicsEngine, Texture* tex1)
+{
+	//Create the boxes
+	Object* firstBox = new Object("1stBox");
+	Object* secondBox = new Object("2ndBox");
+	Object* thirdBox = new Object("3rdBox");
+	Object* fourthBox = new Object("4thBox");
+	//Create the boxes in a physic way
+	PhysicsEngine->CreateBox(.5f, .5f, .5f, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0); //1stbox
+	std::vector <GLfloat> BoxVertexBufferData = {
+		-1, -1, -1,
+		1, -1, -1,
+		1, 1, -1,
+		-1, 1, -1,
+		-1, -1, 1,
+		1, -1, 1,
+		1, 1, 1,
+		-1, 1, 1,
+	};
+	std::vector <GLfloat> BoxTexcoordBufferData = {
+		0, 0,
+		1, 0,
+		1, 1,
+		0, 1
+	};
+	std::vector<GLfloat> BoxNormalsBufferData = {
+		0, 0, 1,
+		1, 0, 0,
+		0, 0, -1,
+		-1, 0, 0,
+		0, 1, 0,
+		0, -1, 0
+	};
+	std::vector<unsigned int> BoxIndicesBufferData = {
+		0, 1, 3,
+		3, 1, 2,
+		1, 5, 2,
+		2, 5, 6,
+		5, 4, 6,
+		6, 4, 7,
+		4, 0, 7,
+		7, 0, 3,
+		3, 2, 7,
+		7, 2, 6,
+		4, 5, 0,
+		0, 5, 1
+	};
+	//Create the vertex assembly of the boxes
+	VertexAssembly* boxVertexAssembly = new VertexAssembly(BoxVertexBufferData, BoxNormalsBufferData, BoxTexcoordBufferData, BoxIndicesBufferData);
+	//Create the Mesh
+	Mesh* firstBoxMesh = new Mesh(boxVertexAssembly, tex1);
+	firstBox->AddComponent(firstBoxMesh);
+	vectorPtr.push_back(firstBox);
+}
+
 int main(int argc, char* argv[])
 {
 
@@ -107,7 +162,7 @@ int main(int argc, char* argv[])
 
 	bool Freelook = false;
 	std::vector<Object*> GameObjects;
-	float sphereRadius = .5f;
+	float sphereRadius = .25f;
 
     int index = 0;
     bool isActive = true;
@@ -126,10 +181,61 @@ int main(int argc, char* argv[])
 
 	BulletPhysics* PhysicsEngine = new BulletPhysics();
 
-	for (size_t i = 0; i < 5001; i++)
+	for (size_t i = 0; i < 2001; i++)
 	{
 		if (i == 0)
 		{
+			//Create the boxes
+			Object* firstBox = new Object("1stBox");
+			Object* secondBox = new Object("2ndBox");
+			Object* thirdBox = new Object("3rdBox");
+			Object* fourthBox = new Object("4thBox");
+			//Create the boxes in a physic way
+			PhysicsEngine->CreateBox(.5f, .5f, .5f, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0); //1stbox
+			std::vector <GLfloat> BoxVertexBufferData = {
+				-1, -1, -1,
+				1, -1, -1,
+				1, 1, -1,
+				-1, 1, -1,
+				-1, -1, 1,
+				1, -1, 1,
+				1, 1, 1,
+				-1, 1, 1,
+			};
+			std::vector <GLfloat> BoxTexcoordBufferData = {
+				0, 0,
+				1, 0,
+				1, 1,
+				0, 1
+			};
+			std::vector<GLfloat> BoxNormalsBufferData = {
+				0, 0, 1,
+				1, 0, 0,
+				0, 0, -1,
+				-1, 0, 0,
+				0, 1, 0,
+				0, -1, 0
+			};
+			std::vector<unsigned int> BoxIndicesBufferData = {
+				0, 1, 3,
+				3, 1, 2,
+				1, 5, 2,
+				2, 5, 6,
+				5, 4, 6,
+				6, 4, 7,
+				4, 0, 7,
+				7, 0, 3,
+				3, 2, 7,
+				7, 2, 6,
+				4, 5, 0,
+				0, 5, 1
+			};
+			//Create the vertex assembly of the boxes
+			VertexAssembly* boxVertexAssembly = new VertexAssembly(BoxVertexBufferData, BoxNormalsBufferData, BoxTexcoordBufferData, BoxIndicesBufferData);
+			//Create the Mesh
+			Mesh* firstBoxMesh = new Mesh(boxVertexAssembly, tex1);
+			firstBox->AddComponent(firstBoxMesh);
+			GameObjects.push_back(firstBox);
 			//Create a plane object of name Plane
 			Object* planeObject = new Object("Plane");
 			//Create the plane in a physic way
@@ -158,24 +264,24 @@ int main(int argc, char* argv[])
 			planeObject->AddComponent(planeMesh);
 			GameObjects.push_back(planeObject);
 		}
-		else
-		{
-			//Create a sphere object of name Spherei
-			Object* sphereObject = new Object("Sphere%d" + i);
-			//Create the sphere in a physic way
-			PhysicsEngine->CreateSphere(sphereRadius, (float)distrX(gen), (float)distrY(gen), (float)distrZ(gen), 1.0f);
-			//Create the parameter for the render of the sphere
-			SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 8, 10);
-			//Add them to a VertexAssembly
-			VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
-			//Create the Mesh with the parameter from the VertexAssembly and indices from 
-			Mesh* sphereMesh = new Mesh(sphereVertexAssembly,tex2);
-			//add it to the sphereObject
-			sphereObject->AddComponent(sphereMesh);
-			//Put the sphere object in the vector housing all of them
-			GameObjects.push_back(sphereObject);
-			++nbBall;
-		}
+		//else
+		//{
+		//	//Create a sphere object of name Spherei
+		//	Object* sphereObject = new Object("Sphere%d" + i);
+		//	//Create the sphere in a physic way
+		//	PhysicsEngine->CreateSphere(sphereRadius, (float)distrX(gen), (float)distrY(gen), (float)distrZ(gen), 1.0f);
+		//	//Create the parameter for the render of the sphere
+		//	SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 8, 10);
+		//	//Add them to a VertexAssembly
+		//	VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
+		//	//Create the Mesh with the parameter from the VertexAssembly and indices from 
+		//	Mesh* sphereMesh = new Mesh(sphereVertexAssembly,tex2);
+		//	//add it to the sphereObject
+		//	sphereObject->AddComponent(sphereMesh);
+		//	//Put the sphere object in the vector housing all of them
+		//	GameObjects.push_back(sphereObject);
+		//	++nbBall;
+		//}
 	}
 	while (apprunning)
 	{
@@ -295,7 +401,6 @@ int main(int argc, char* argv[])
 
 		for (size_t i = 0; i < GameObjects.size(); i++)
 		{
-
 			Mesh* MeshComponent = (Mesh*)GameObjects[i]->GetSpecificComponent(ComponentName::MESH_COMPONENT);
 			glm::mat4 Model = glm::mat4(1.0f);
 			glm::quat quaternionRotation = MeshComponent->Rotation(PhysicsEngine->rigidbodies[i]);
@@ -303,7 +408,7 @@ int main(int argc, char* argv[])
 			Model *= mat4(quaternionRotation);
 			glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
             prog1.UpdateCamera(&MVP[0][0], &Model[0][0], &cam.GetView()[0][0]);
-            if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE)
+            if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE || PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == BOX_SHAPE_PROXYTYPE)
 			{
 				var += MeshComponent->DrawPlane();
 			}
