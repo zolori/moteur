@@ -42,16 +42,18 @@ glm::mat4 Mesh::TransformMatrix(btRigidBody* rb)
 	return transformMatrix;
 }
 
-void Mesh::DrawSphere()
+int Mesh::DrawSphere()
 {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_QUADS, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
+	return (vertices->GetIndices().size() * 2); // il y a 2 tr
 }
 
-void Mesh::DrawPlane()
+int Mesh::DrawPlane()
 {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
+	return vertices->GetIndices().size();
 }
 
 
