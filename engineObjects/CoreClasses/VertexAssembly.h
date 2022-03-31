@@ -11,7 +11,11 @@ public:
 	* @param Texcoord A vector containg all the texture coordinates (U V)
 	* @param Color A vector containing all the color(R G B)
 	*/
-	VertexAssembly(std::vector<GLfloat> Position, std::vector<GLfloat> Normal, std::vector<GLfloat> Texcoords, std::vector<unsigned int> Indices, std::vector<GLfloat> Color = std::vector<GLfloat>());
+	VertexAssembly(std::vector<GLfloat> Position, 
+					std::vector<unsigned int> Indices,
+					std::vector<GLfloat> Normal = std::vector<GLfloat>(),
+					std::vector<GLfloat> Texcoords =  std::vector<GLfloat>(),
+					std::vector<GLfloat> Color = std::vector<GLfloat>());
 	//Empty VertexAssembly constructor to be used by default
 	VertexAssembly() = default;
 	//Destructor of the VertexAssembly class

@@ -47,7 +47,7 @@ SDL_Window* SetUpWindow()
 	return win;
 }
 
-Object* boxBoundaries(std::vector<Object*> vectorPtr, BulletPhysics* PhysicsEngine, Texture* tex1)
+Object* boxBoundaries(BulletPhysics* PhysicsEngine)
 {
 	//Create the boxes
 	Object* firstBox = new Object("1stBox");
@@ -95,11 +95,11 @@ Object* boxBoundaries(std::vector<Object*> vectorPtr, BulletPhysics* PhysicsEngi
 		0, 5, 1
 	};
 	//Create the vertex assembly of the boxes
-	VertexAssembly* boxVertexAssembly = new VertexAssembly(BoxVertexBufferData, BoxNormalsBufferData, BoxTexcoordBufferData, BoxIndicesBufferData);
+	VertexAssembly* boxVertexAssembly = new VertexAssembly(BoxVertexBufferData, BoxIndicesBufferData);
 	//Create the Mesh
-	Mesh* firstBoxMesh = new Mesh(boxVertexAssembly, tex1);
+	Mesh* firstBoxMesh = new Mesh(boxVertexAssembly);
 	firstBox->AddComponent(firstBoxMesh);
-	vectorPtr.push_back(firstBox);
+	return firstBox;
 }
 
 int main(int argc, char* argv[])
@@ -181,61 +181,37 @@ int main(int argc, char* argv[])
 
 	BulletPhysics* PhysicsEngine = new BulletPhysics();
 
+	std::vector <GLfloat> BoxVertexBufferData = {
+		1, 1, 1,
+		-1, 1, 1,
+		1, -1, 1,
+		-1, -1, 1,
+		1, 1, -1,
+		-1, 1, -1,
+		1, -1, -1,
+		-1, -1, -1,
+	};
+	std::vector<unsigned int> BoxIndicesBufferData = {
+		0, 1, 2,
+		3, 2, 1,
+		4, 0, 6,
+		6, 0, 2,
+		5, 1, 4,
+		4, 1, 0,
+		7, 3, 1,
+		7, 1, 5,
+		5, 4, 7,
+		7, 4, 6,
+		7, 2, 3,
+		7, 6, 2
+	};
+	VertexAssembly* boxvertexAssembly = new VertexAssembly(BoxVertexBufferData, BoxIndicesBufferData);
+	Mesh* boxMesh = new Mesh(boxvertexAssembly, tex1);
+
 	for (size_t i = 0; i < 2001; i++)
 	{
 		if (i == 0)
 		{
-			//Create the boxes
-			Object* firstBox = new Object("1stBox");
-			Object* secondBox = new Object("2ndBox");
-			Object* thirdBox = new Object("3rdBox");
-			Object* fourthBox = new Object("4thBox");
-			//Create the boxes in a physic way
-			PhysicsEngine->CreateBox(.5f, .5f, .5f, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0); //1stbox
-			std::vector <GLfloat> BoxVertexBufferData = {
-				-1, -1, -1,
-				1, -1, -1,
-				1, 1, -1,
-				-1, 1, -1,
-				-1, -1, 1,
-				1, -1, 1,
-				1, 1, 1,
-				-1, 1, 1,
-			};
-			std::vector <GLfloat> BoxTexcoordBufferData = {
-				0, 0,
-				1, 0,
-				1, 1,
-				0, 1
-			};
-			std::vector<GLfloat> BoxNormalsBufferData = {
-				0, 0, 1,
-				1, 0, 0,
-				0, 0, -1,
-				-1, 0, 0,
-				0, 1, 0,
-				0, -1, 0
-			};
-			std::vector<unsigned int> BoxIndicesBufferData = {
-				0, 1, 3,
-				3, 1, 2,
-				1, 5, 2,
-				2, 5, 6,
-				5, 4, 6,
-				6, 4, 7,
-				4, 0, 7,
-				7, 0, 3,
-				3, 2, 7,
-				7, 2, 6,
-				4, 5, 0,
-				0, 5, 1
-			};
-			//Create the vertex assembly of the boxes
-			VertexAssembly* boxVertexAssembly = new VertexAssembly(BoxVertexBufferData, BoxNormalsBufferData, BoxTexcoordBufferData, BoxIndicesBufferData);
-			//Create the Mesh
-			Mesh* firstBoxMesh = new Mesh(boxVertexAssembly, tex1);
-			firstBox->AddComponent(firstBoxMesh);
-			GameObjects.push_back(firstBox);
 			//Create a plane object of name Plane
 			Object* planeObject = new Object("Plane");
 			//Create the plane in a physic way
@@ -248,40 +224,46 @@ int main(int argc, char* argv[])
 				1000,0,1000
 			};
 			std::vector<GLfloat> TexCoord = {
-				-1000,0,1000,
-				-1000,0,-1000,
-				1000,0,-1000,
-				1000,0,1000
+				-1000,1000,
+				-1000,-1000,
+				1000,-1000,
+				1000,1000
 			};
 			std::vector<unsigned int> Indices = {
 				0, 1, 2,
 				0, 2, 3
 			};
-			VertexAssembly* planeVertexAssembly = new VertexAssembly(Vertices, Vertices, TexCoord, Indices, Vertices);
+			VertexAssembly* planeVertexAssembly = new VertexAssembly(Vertices, Indices, Vertices, TexCoord, Vertices);
 			//Create the Mesh
 			Mesh* planeMesh = new Mesh(planeVertexAssembly,tex1);
 			//Add it to the planeObject
 			planeObject->AddComponent(planeMesh);
 			GameObjects.push_back(planeObject);
+			//GameObjects.push_back(boxBoundaries(PhysicsEngine));
 		}
-		//else
-		//{
-		//	//Create a sphere object of name Spherei
-		//	Object* sphereObject = new Object("Sphere%d" + i);
-		//	//Create the sphere in a physic way
-		//	PhysicsEngine->CreateSphere(sphereRadius, (float)distrX(gen), (float)distrY(gen), (float)distrZ(gen), 1.0f);
-		//	//Create the parameter for the render of the sphere
-		//	SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 8, 10);
-		//	//Add them to a VertexAssembly
-		//	VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
-		//	//Create the Mesh with the parameter from the VertexAssembly and indices from 
-		//	Mesh* sphereMesh = new Mesh(sphereVertexAssembly,tex2);
-		//	//add it to the sphereObject
-		//	sphereObject->AddComponent(sphereMesh);
-		//	//Put the sphere object in the vector housing all of them
-		//	GameObjects.push_back(sphereObject);
-		//	++nbBall;
-		//}
+		else
+		{
+			//Create a sphere object of name Spherei
+			Object* sphereObject = new Object("Sphere%d" + i);
+			//Create the sphere in a physic way
+			PhysicsEngine->CreateSphere(sphereRadius, (float)distrX(gen), (float)distrY(gen), (float)distrZ(gen), 1.0f);
+			//Create the parameter for the render of the sphere
+			SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 8, 10);
+			//Add them to a VertexAssembly
+			VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(),
+																		sphereParameter->GetIndices(),
+																		sphereParameter->GetNormals(),
+																		sphereParameter->GetTexcoords(),
+																		sphereParameter->GetVertices()
+			);
+			//Create the Mesh with the parameter from the VertexAssembly and indices from 
+			Mesh* sphereMesh = new Mesh(sphereVertexAssembly,tex2);
+			//add it to the sphereObject
+			sphereObject->AddComponent(sphereMesh);
+			//Put the sphere object in the vector housing all of them
+			GameObjects.push_back(sphereObject);
+			++nbBall;
+		}
 	}
 	while (apprunning)
 	{
@@ -340,7 +322,12 @@ int main(int argc, char* argv[])
 					//Create the parameter for the render of the sphere
 					SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 8, 12);
 					//Add them to a VertexAssembly
-					VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
+					VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(),
+																				sphereParameter->GetIndices(),
+																				sphereParameter->GetNormals(),
+																				sphereParameter->GetTexcoords(),
+																				sphereParameter->GetVertices()
+					);					
 					//Create the Mesh with the parameter from the VertexAssembly and indices from 
 					Mesh* sphereMesh = new Mesh(sphereVertexAssembly,tex2);
 					//add it to the sphereObject
@@ -398,7 +385,7 @@ int main(int argc, char* argv[])
 		cam.SetView();
 		cam.SetProjection();
 
-
+		var += boxMesh->DrawPlane();
 		for (size_t i = 0; i < GameObjects.size(); i++)
 		{
 			Mesh* MeshComponent = (Mesh*)GameObjects[i]->GetSpecificComponent(ComponentName::MESH_COMPONENT);
