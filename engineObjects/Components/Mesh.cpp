@@ -21,28 +21,6 @@ Mesh::~Mesh()
 	delete TexcoordBuffer;
 	delete IndiceBuffer;
 }
-
-int Mesh::Draw()
-{
-	for (size_t i = 0; i < textures.size(); i++)
-		textures[i]->useIMG(i);
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
-	return vertices->GetIndices().size();
-}
-
-glm::mat4 Mesh::TransformMatrix(btRigidBody* rb)
-{
-	btTransform t;
-	rb->getMotionState()->getWorldTransform(t);
-	float mat[16];
-	glm::mat4 transformMatrix;
-	t.getOrigin();
-	t.getRotation();
-	t.getOpenGLMatrix(glm::value_ptr(transformMatrix));
-	return transformMatrix;
-}
-
 glm::quat Mesh::Rotation(btRigidBody* rb)
 {
 	glm::quat quaternion = glm::quat(rb->getCenterOfMassTransform().getRotation().w(),

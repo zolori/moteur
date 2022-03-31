@@ -22,12 +22,6 @@ public:
 	Mesh(VertexAssembly* Vertices, std::vector<Texture*> Textures = std::vector<Texture*>());
 	//Destructor of the Mesh class
 	~Mesh();
-	/**
-	* Draw the elements of the mesh
-	*/
-	int Draw();
-	//Calculate the transformMatrix of a sphere
-	glm::mat4 TransformMatrix(btRigidBody* rb);
 	//Get Rotations
 	glm::quat Rotation(btRigidBody* rb);
 	//Get Translation

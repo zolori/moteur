@@ -102,6 +102,8 @@ void BulletPhysics::CreateBox(float xHalfSize, float yHalfSize, float zHalfSize,
 
 void BulletPhysics::CreateSphere(float radius, float xPos, float yPos, float zPos, float Mass)
 {
+	float randomX = static_cast<float> (rand()) / (static_cast<float> (RAND_MAX / 0.02)) - 0.01;
+	float randomZ = static_cast<float> (rand()) / (static_cast<float> (RAND_MAX / 0.02)) - 0.01;
 	btCollisionShape* colShape = new btSphereShape(radius);
 	collisionShapes.push_back(colShape);
 
@@ -124,7 +126,7 @@ void BulletPhysics::CreateSphere(float radius, float xPos, float yPos, float zPo
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
 	btRigidBody* body = new btRigidBody(rbInfo);
 	body->setRestitution(.5);
-	//body->applyTorqueImpulse(btVector3((rand() % 1000) * 0.01, (rand() % 1000) * 0.01, (rand() % 1000) * 0.01));
+	body->applyTorqueImpulse(btVector3((rand() % 1000) * randomX, 0, (rand() % 1000) * randomZ));
 	dynamicsWorld->addRigidBody(body);
 	rigidbodies.push_back(body);
 }
