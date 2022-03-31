@@ -21,25 +21,23 @@ Mesh::~Mesh()
 	delete TexcoordBuffer;
 	delete IndiceBuffer;
 }
-
-int Mesh::Draw()
+glm::quat Mesh::Rotation(btRigidBody* rb)
 {
-	for (size_t i = 0; i < textures.size(); i++)
-		textures[i]->useIMG(i);
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, vertices->GetIndices().size(), GL_UNSIGNED_INT, 0);
-	return vertices->GetIndices().size();
+	glm::quat quaternion = glm::quat(rb->getCenterOfMassTransform().getRotation().w(),
+										rb->getCenterOfMassTransform().getRotation().x(),
+										rb->getCenterOfMassTransform().getRotation().y(),
+										rb->getCenterOfMassTransform().getRotation().z()
+	);
+	return quaternion;
 }
 
-glm::mat4 Mesh::TransformMatrix(btRigidBody* rb)
+glm::vec3 Mesh::Translation(btRigidBody* rb)
 {
-	float r = ((btSphereShape*)rb->getCollisionShape())->getRadius();
-	btTransform t;
-	rb->getMotionState()->getWorldTransform(t);
-	float mat[16];
-	glm::mat4 transformMatrix;
-	t.getOpenGLMatrix(glm::value_ptr(transformMatrix));
-	return transformMatrix;
+	glm::vec3 vector3 = glm::vec3(rb->getCenterOfMassTransform().getOrigin().x(),
+									rb->getCenterOfMassTransform().getOrigin().y(),
+									rb->getCenterOfMassTransform().getOrigin().z()
+	);
+	return vector3;
 }
 
 int Mesh::DrawSphere()
