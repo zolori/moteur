@@ -49,7 +49,7 @@ int Mesh::DrawSphere()
 	return (vertices->GetIndices().size() * 2); // il y a 2 tr
 }
 
-int Mesh::DrawPlane()
+int Mesh::DrawCube()
 {
 	texture->useIMG(0);
 	glBindVertexArray(VAO);

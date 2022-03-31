@@ -301,33 +301,6 @@ int main(int argc, char* argv[])
 					break;
 				case SDLK_SPACE:
 				{
-					//Create a sphere object of name Sphere
-					Object* sphereObject = new Object("Sphere");
-					//Create the sphere in a physic way
-					PhysicsEngine->CreateSphere(sphereRadius,
-						cam.GetPosition().x + cam.GetFront().x,
-						cam.GetPosition().y + cam.GetFront().y,
-						cam.GetPosition().z + cam.GetFront().z,
-						1.0f
-					);
-					btVector3 look = btVector3(cam.GetFront().x, cam.GetFront().y, cam.GetFront().z) * 20;
-					PhysicsEngine->rigidbodies.back()->setLinearVelocity(look);
-					//Create the parameter for the render of the sphere
-					SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 8, 12);
-					//Add them to a VertexAssembly
-					VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(),
-																				sphereParameter->GetIndices(),
-																				sphereParameter->GetNormals(),
-																				sphereParameter->GetTexcoords(),
-																				sphereParameter->GetVertices()
-					);					
-					//Create the Mesh with the parameter from the VertexAssembly and indices from 
-					Mesh* sphereMesh = new Mesh(sphereVertexAssembly,tex2);
-					//add it to the sphereObject
-					sphereObject->AddComponent(sphereMesh);
-					//Put the sphere object in the vector housing all of them
-					GameObjects.push_back(sphereObject);
-					++nbBall;
 					if (render)
 					{
 						//Create a sphere object of name Sphere
@@ -344,7 +317,12 @@ int main(int argc, char* argv[])
 						//Create the parameter for the render of the sphere
 						SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 8, 12);
 						//Add them to a VertexAssembly
-						VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
+						VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(),
+																					sphereParameter->GetIndices(),
+																					sphereParameter->GetNormals(),
+																					sphereParameter->GetTexcoords(),
+																					sphereParameter->GetVertices()
+						);
 						//Create the Mesh with the parameter from the VertexAssembly and indices from 
 						Mesh* sphereMesh = new Mesh(sphereVertexAssembly, tex2);
 						//add it to the sphereObject
