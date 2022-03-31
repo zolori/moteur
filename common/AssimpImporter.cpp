@@ -83,32 +83,33 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene, const char* textureFile
             }
         }
         VertexAssembly* MeshVertices = new VertexAssembly(Pos,
-                                                            Norm,
-                                                            TexCoords,
-                                                            Indices,
-                                                            Color);
-        std::vector<Texture*> TextureVector;
+            Norm,
+            TexCoords,
+            Indices,
+            Color);
+        Texture* texture;
+        //std::vector<Texture*> TextureVector;
         if (scene->HasTextures())
         {
             for (size_t j = 0; j < scene->mNumTextures; j++)
             {
-                Texture* texture = new Texture(scene->mTextures[i]->mWidth, scene->mTextures[i]->mHeight);
-                TextureVector.push_back(texture);
+                texture = new Texture(scene->mTextures[i]->mWidth, scene->mTextures[i]->mHeight);
+                //TextureVector.push_back(texture);
             }
         }
         else
         {
             if (textureFile != nullptr)
             {
-                Texture* texture = new Texture();
+                texture = new Texture();
                 std::string texure_path = FindFile("assets", textureFile);
                 texture->loadIMG(texure_path.c_str());
-                TextureVector.push_back(texture);
+                //TextureVector.push_back(texture);
             }
         }
 
-        MeshToDraw = new Mesh(MeshVertices, TextureVector);
-        MeshesToDraw.push_back(MeshToDraw);
+        MeshToDraw = new Mesh(MeshVertices, texture);
+        //MeshesToDraw.push_back(MeshToDraw);
     }
     return MeshesToDraw;
 }

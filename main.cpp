@@ -10,6 +10,7 @@
 #include "engineObjects/Object.h"
 #include "engineObjects/CoreClasses/VertexAssembly.h"
 #include "engineObjects/CoreClasses/Texture.h"
+#include "common/stb_image.h"
 
 
 #define SDL_WIDTH 1024
@@ -54,12 +55,12 @@ int main(int argc, char* argv[])
     glewInit();
     //Light Setup
     std::vector<Light*> objectLights;
-    Light* light1 = new Light("light1", vec3(-10.0, 5.0, 2.0), vec3(1.0, 0.0, 1.0), 50.0f);
-    Light* light2 = new Light("light2",vec3(0.0, 5.0, 2.0), vec3(0.5, 1.0, 1.0), 100.0f);
-    Light* light3 = new Light("light3", vec3(-2.0, 4.0, 2.0), vec3(0.25, 0.75, 0), 70.0f);
-    Light* light4 = new Light("light4", vec3(2, 5, 2), vec3(0.15, 1, 0.65), 100.0f);
-    Light* light5 = new Light("light5", vec3(-2, 5, 2), vec3(1, .45, 0.35), 50.0f);
-    Light* light6 = new Light("light6", vec3(2, 5, 2), vec3(0.5, .56, .89), 100.0f);
+    Light* light1 = new Light("light1", vec3(-10.0, 5.0, 2.0), vec3(1.0, 0.0, 1.0), 100.0f);
+    Light* light2 = new Light("light2",vec3(0.0, 5.0, 2.0), vec3(0.5, 1.0, 1.0), 50.0f);
+    Light* light3 = new Light("light3", vec3(-2.0, 4.0, 2.0), vec3(0.25, 0.75, 0), 60.0f);
+    Light* light4 = new Light("light4", vec3(2, 5, 2), vec3(0.15, 1, 0.65), 75.0f);
+    Light* light5 = new Light("light5", vec3(-2, 5, 2), vec3(1, .45, 0.35),42.0f);
+    Light* light6 = new Light("light6", vec3(2, 5, 2), vec3(0.5, .56, .89), 37.0f);
     const char* lights[6]{};
     objectLights.push_back(light1);
     objectLights.push_back(light2);
@@ -74,22 +75,18 @@ int main(int argc, char* argv[])
     }
 
     Program prog1 = Program(SHADER_DIRECTORY, VERTEX_SHADER, FRAGMENT_SHADER, objectLights.size());
-    std::string texture_path = FindFile("assets", "Stone 01_1K_Diffuse.png");
+    std::string texture_path_plane = FindFile("assets", "Stone 01_1K_Diffuse.png");
     std::string texture_path_sphere = FindFile("assets", "Cobblestone_Bump.jpg");
 
-    GLuint Texture = loadDDS(texture_path.c_str());
-    GLuint Texture2 = loadDDS(texture_path_sphere.c_str());
     prog1.AddUniformVar("myTextureSampler");
-   // Texture* tex = new Texture();
-    //tex->loadIMG(texture_path_plane.c_str());
-   // std::vector<Texture*> lesTexMex;
-    //lesTexMex.push_back(tex);
-    //Texture* tex2 = new Texture();
-    //std::string texture_path_sphere = FindFile("assets", "Cobblestone_Bump.jpg");
-    //printf(texture_path_sphere.c_str());
-    //tex2->loadIMG(texture_path_sphere.c_str());
-   // std::vector<Texture*> lesTexMexEpices;
-    //lesTexMexEpices.push_back(tex2);s
+    prog1.AddUniformVar("myTextureSampler2");
+
+    Texture *tex1 = new Texture();
+    Texture *tex2 = new Texture();
+    tex1->loadIMG(texture_path_plane.c_str());
+    tex2->loadIMG(texture_path_sphere.c_str());
+
+
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -150,7 +147,7 @@ int main(int argc, char* argv[])
             };
             VertexAssembly* planeVertexAssembly = new VertexAssembly(Vertices, Vertices, TexCoord, Indices, Vertices);
             //Create the Mesh
-            Mesh* planeMesh = new Mesh(planeVertexAssembly);
+            Mesh* planeMesh = new Mesh(planeVertexAssembly,tex1);
             //Add it to the planeObject
             planeObject->AddComponent(planeMesh);
             GameObjects.push_back(planeObject);
@@ -166,7 +163,7 @@ int main(int argc, char* argv[])
             //Add them to a VertexAssembly
             VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
             //Create the Mesh with the parameter from the VertexAssembly and indices from 
-            Mesh* sphereMesh = new Mesh(sphereVertexAssembly);
+            Mesh* sphereMesh = new Mesh(sphereVertexAssembly,tex2);
             //add it to the sphereObject
             sphereObject->AddComponent(sphereMesh);
             //Put the sphere object in the vector housing all of them
@@ -221,7 +218,7 @@ int main(int argc, char* argv[])
                             //Add them to a VertexAssembly
                             VertexAssembly* sphereVertexAssembly = new VertexAssembly(sphereParameter->GetVertices(), sphereParameter->GetNormals(), sphereParameter->GetTexcoords(), sphereParameter->GetIndices(), sphereParameter->GetVertices());
                             //Create the Mesh with the parameter from the VertexAssembly and indices from 
-                            Mesh* sphereMesh = new Mesh(sphereVertexAssembly);
+                            Mesh* sphereMesh = new Mesh(sphereVertexAssembly,tex2);
                             //add it to the sphereObject
                             sphereObject->AddComponent(sphereMesh);
                             //Put the sphere object in the vector housing all of them
@@ -295,17 +292,15 @@ int main(int argc, char* argv[])
             }
            else
             {
+
                 MeshComponent->DrawSphere();
             }
         }
 
 
+
         prog1.Use();
-        prog1.BindTexture(Texture,0);
-        prog1.BindTexture(Texture2,1); 
         prog1.UpdateLights(objectLights);
-        
-        //DisplayUniform(prog1.GetNum());
 
         //Render Loop
         ImGui_ImplOpenGL3_NewFrame();

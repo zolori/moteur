@@ -19,13 +19,10 @@ public:
 	* @param A vector filled with instances of the Texture class containing the mesh textures.
 	* By default empty
 	*/
-	Mesh(VertexAssembly* Vertices, std::vector<Texture*> Textures = std::vector<Texture*>());
+	Mesh(VertexAssembly* Vertices, Texture* Texture = new Texture());
 	//Destructor of the Mesh class
 	~Mesh();
-	/**
-	* Draw the elements of the mesh
-	*/
-	int Draw();
+
 	//Calculate the transformMatrix of a sphere
 	glm::mat4 TransformMatrix(btRigidBody* rb);
 	//Calculate the transformMatrix of a plane
@@ -35,7 +32,7 @@ public:
 	void DrawPlane();
 	//Attribute
 	VertexAssembly* vertices;
-	std::vector<Texture*> textures;
+	Texture* texture;
 
 	//Pure virtual method of Component overriden
 	inline void f() override { printf("virtual function overriden"); }

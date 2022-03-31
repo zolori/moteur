@@ -19,6 +19,7 @@ struct PointLight
 
 // Values that stay constant for the whole mesh.
 uniform sampler2D myTextureSampler;
+uniform sampler2D myTextureSampler2;
 uniform PointLight pointLights[LightNumber];
 
 vec3 CalculatePointLight(PointLight pt);

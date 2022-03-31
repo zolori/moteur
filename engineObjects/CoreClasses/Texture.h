@@ -5,6 +5,7 @@ class Texture
 public:
 	//Constructor of the Texture class.
 	Texture();
+	Texture(int n);
 	//Constructor of the Texture class with parameters
 	Texture(int Width, int Height);
 	//Destructor of the Texture class.

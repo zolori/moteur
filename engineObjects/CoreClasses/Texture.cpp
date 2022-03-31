@@ -1,11 +1,18 @@
 #include "Texture.h"
 #include <../../common/stb_image.h>
 
-Texture::Texture() 
+Texture::Texture(int n)
 {
 	imgWidth = 0;
 	imgHeight = 0;
-	glGenTextures(1, &Texname);
+	glGenTextures(n, &Texname);
+}
+
+Texture::Texture()
+{
+	imgWidth = 0;
+	imgHeight = 0;
+	glGenTextures(2, &Texname);
 }
 
 Texture::Texture(int Width, int Height)
@@ -45,6 +52,7 @@ bool Texture::loadIMG(const char* filepath)
 
 	return true;
 }
+
 
 void Texture::useIMG(int unit)
 {
