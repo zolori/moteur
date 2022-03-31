@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
 
 	BulletPhysics* PhysicsEngine = new BulletPhysics();
 
-	for (size_t i = 0; i < 2001; i++)
+	for (size_t i = 0; i < 5001; i++)
 	{
 		if (i == 0)
 		{
@@ -332,7 +332,6 @@ int main(int argc, char* argv[])
 		ImGui::End();
 
         //Light Window
-        ImGui::SetNextWindowPos(ImVec2(base_pos.x + 10, base_pos.y + 125), ImGuiCond_Always);
         ImGui::Begin("Lights");
         ImGui::Combo("Lights", &index, lights, IM_ARRAYSIZE(lights));
         ImGui::BeginChild("Selected light Parameters", ImVec2(0.0, 0.0), true, ImGuiWindowFlags_None);
@@ -370,8 +369,6 @@ int main(int argc, char* argv[])
         }
         ImGui::EndChild();
         ImGui::End();
-        ImGui::SetNextWindowPos(ImVec2(base_pos.x + 10, base_pos.y + 110), ImGuiCond_Always);
-
 
 		static float sliderFloat = -10.f;
 		ImGui::Begin("Tools");
