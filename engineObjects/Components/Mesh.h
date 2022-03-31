@@ -30,7 +30,7 @@ public:
 	//Draw a sphere;
 	int DrawSphere();
 	//Draw a plane;
-	int DrawPlane();
+	int DrawCube();
 	//Attribute
 	VertexAssembly* vertices;
 	Texture* texture;

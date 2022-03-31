@@ -83,9 +83,9 @@ std::vector<Mesh*> SceneProcessing(aiScene const* scene, const char* textureFile
             }
         }
         VertexAssembly* MeshVertices = new VertexAssembly(Pos,
+            Indices,
             Norm,
             TexCoords,
-            Indices,
             Color);
         Texture* texture;
         //std::vector<Texture*> TextureVector;

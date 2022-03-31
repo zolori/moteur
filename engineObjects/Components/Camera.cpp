@@ -8,7 +8,7 @@ using namespace std::chrono;
 Camera::Camera(SDL_Window* NewWin)
 {
     Super:name = ComponentName::CAM_COMPONENT;
-    Position = glm::vec3(1, 2, 5);
+    Position = glm::vec3(0, 10, 0);
     Front = glm::vec3(0, 0, -1.0f);
     Up = glm::vec3(0, 1, 0);
     win = NewWin;

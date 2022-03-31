@@ -11,7 +11,7 @@ public:
 
 	void Update(float dt);
 
-	void CreateBox(float xHalfSize, float yHalfSize, float zHalfSize, float xPos, float yPos, float zPos, float Mass);
+	void CreateBox(float xHalfSize, float yHalfSize, float zHalfSize, float xPos, float yPos, float zPos, float xRota, float yRota, float zRota, float wRota, float Mass);
 	void CreateSphere(float radius, float xPos, float yPos, float zPos, float Mass);
 	void CreatePlane();
 
