@@ -47,24 +47,17 @@ SDL_Window* SetUpWindow()
 	return win;
 }
 
-Object* boxBoundaries(BulletPhysics* PhysicsEngine)
+VertexAssembly* WallAssembly(float x, float y, float z)
 {
-	//Create the boxes
-	Object* firstBox = new Object("1stBox");
-	Object* secondBox = new Object("2ndBox");
-	Object* thirdBox = new Object("3rdBox");
-	Object* fourthBox = new Object("4thBox");
-	//Create the boxes in a physic way
-	PhysicsEngine->CreateBox(.5f, .5f, .5f, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0); //1stbox
 	std::vector <GLfloat> BoxVertexBufferData = {
-		-1, -1, -1,
-		1, -1, -1,
-		1, 1, -1,
-		-1, 1, -1,
-		-1, -1, 1,
-		1, -1, 1,
-		1, 1, 1,
-		-1, 1, 1,
+		-x, -y, -z,
+		x, -y, -z,
+		x, y, -z,
+		-x, y, -z,
+		-x, -y, z,
+		x, -y, z,
+		x, y, z,
+		-x, y, z,
 	};
 	std::vector <GLfloat> BoxTexcoordBufferData = {
 		0, 0,
@@ -72,34 +65,78 @@ Object* boxBoundaries(BulletPhysics* PhysicsEngine)
 		1, 1,
 		0, 1
 	};
-	std::vector<GLfloat> BoxNormalsBufferData = {
-		0, 0, 1,
-		1, 0, 0,
-		0, 0, -1,
-		-1, 0, 0,
-		0, 1, 0,
-		0, -1, 0
+	std::vector<unsigned int> BoxIndicesBufferData = {
+	0, 1, 3,
+	3, 1, 2,
+	1, 5, 2,
+	2, 5, 6,
+	5, 4, 6,
+	6, 4, 7,
+	4, 0, 7,
+	7, 0, 3,
+	3, 2, 7,
+	7, 2, 6,
+	4, 5, 0,
+	0, 5, 1
+	};
+	return new VertexAssembly(BoxVertexBufferData, BoxIndicesBufferData, BoxVertexBufferData, BoxTexcoordBufferData, BoxVertexBufferData);
+}
+VertexAssembly* GroundAssembly(float x)
+{
+	std::vector <GLfloat> BoxVertexBufferData = {
+		-x, -1, -x,
+		x, -1, -x,
+		x, 1, -x,
+		-x, 1, -x,
+		-x, -1, x,
+		x, -1, x,
+		x, 1, x,
+		-x, 1, x,
+	};
+	std::vector <GLfloat> BoxTexcoordBufferData = {
+		0, 0,
+		1, 0,
+		1, 1,
+		0, 1
 	};
 	std::vector<unsigned int> BoxIndicesBufferData = {
-		0, 1, 3,
-		3, 1, 2,
-		1, 5, 2,
-		2, 5, 6,
-		5, 4, 6,
-		6, 4, 7,
-		4, 0, 7,
-		7, 0, 3,
-		3, 2, 7,
-		7, 2, 6,
-		4, 5, 0,
-		0, 5, 1
+	0, 1, 3,
+	3, 1, 2,
+	1, 5, 2,
+	2, 5, 6,
+	5, 4, 6,
+	6, 4, 7,
+	4, 0, 7,
+	7, 0, 3,
+	3, 2, 7,
+	7, 2, 6,
+	4, 5, 0,
+	0, 5, 1
 	};
-	//Create the vertex assembly of the boxes
-	VertexAssembly* boxVertexAssembly = new VertexAssembly(BoxVertexBufferData, BoxIndicesBufferData);
+	return new VertexAssembly(BoxVertexBufferData, BoxIndicesBufferData, BoxVertexBufferData, BoxTexcoordBufferData, BoxVertexBufferData);
+}
+
+Object* wallBoundaries(BulletPhysics* PhysicsEngine, Texture* tex, VertexAssembly* boxVertexAssembly, float posX, float posY, float posZ, float rotaX, float rotaY, float rotaZ, float rotaW)
+{
+	//Create the box
+	Object* box = new Object("Box");
+	//Create the box in a physic way
+	PhysicsEngine->CreateBox(15, 5, 2, posX, posY, posZ, rotaX, rotaY, rotaZ, rotaW, 0);
 	//Create the Mesh
-	Mesh* firstBoxMesh = new Mesh(boxVertexAssembly);
-	firstBox->AddComponent(firstBoxMesh);
-	return firstBox;
+	Mesh* boxMesh = new Mesh(boxVertexAssembly);
+	box->AddComponent(boxMesh);
+	return box;
+}
+Object* groundBoundaries(BulletPhysics* PhysicsEngine, Texture* tex, VertexAssembly* boxVertexAssembly, float posX, float posY, float posZ, float rotaX, float rotaY, float rotaZ, float rotaW)
+{
+	//Create the box
+	Object* box = new Object("Box");
+	//Create the box in a physic way
+	PhysicsEngine->CreateBox(15, 1, 15, posX, posY, posZ, rotaX, rotaY, rotaZ, rotaW, 0);
+	//Create the Mesh
+	Mesh* boxMesh = new Mesh(boxVertexAssembly);
+	box->AddComponent(boxMesh);
+	return box;
 }
 
 int main(int argc, char* argv[])
@@ -162,7 +199,7 @@ int main(int argc, char* argv[])
 
 	bool Freelook = false;
 	std::vector<Object*> GameObjects;
-	float sphereRadius = .25f;
+	float sphereRadius = .5f;
 
     int index = 0;
     bool isActive = true;
@@ -175,78 +212,30 @@ int main(int argc, char* argv[])
 
 	std::random_device rd; // obtain a random number from hardware
 	std::mt19937 gen(rd()); // seed the generator
-	std::uniform_int_distribution<> distrX(-50, 50); // define the range
-	std::uniform_int_distribution<> distrZ(-50, 50);
-	std::uniform_int_distribution<> distrY(10, 50);
+	std::uniform_int_distribution<> distrX(-8, 8); // define the range
+	std::uniform_int_distribution<> distrZ(-8, 8);
+	std::uniform_int_distribution<> distrY(4, 8);
+
+	float sizeX = 15;
+	float sizeY = 5;
+	float sizeZ = 2;
 
 	BulletPhysics* PhysicsEngine = new BulletPhysics();
-
-	std::vector <GLfloat> BoxVertexBufferData = {
-		1, 1, 1,
-		-1, 1, 1,
-		1, -1, 1,
-		-1, -1, 1,
-		1, 1, -1,
-		-1, 1, -1,
-		1, -1, -1,
-		-1, -1, -1,
-	};
-	std::vector<unsigned int> BoxIndicesBufferData = {
-		0, 1, 2,
-		3, 2, 1,
-		4, 0, 6,
-		6, 0, 2,
-		5, 1, 4,
-		4, 1, 0,
-		7, 3, 1,
-		7, 1, 5,
-		5, 4, 7,
-		7, 4, 6,
-		7, 2, 3,
-		7, 6, 2
-	};
-	VertexAssembly* boxvertexAssembly = new VertexAssembly(BoxVertexBufferData, BoxIndicesBufferData);
-	Mesh* boxMesh = new Mesh(boxvertexAssembly, tex1);
 
 	for (size_t i = 0; i < 2001; i++)
 	{
 		if (i == 0)
 		{
-			//Create a plane object of name Plane
-			Object* planeObject = new Object("Plane");
-			//Create the plane in a physic way
-			PhysicsEngine->CreatePlane();
-			//Parameter for the render of the plane
-			std::vector<GLfloat> Vertices = {
-				-1000,0,1000,
-				-1000,0,-1000,
-				1000,0,-1000,
-				1000,0,1000
-			};
-			std::vector<GLfloat> TexCoord = {
-				-1000,1000,
-				-1000,-1000,
-				1000,-1000,
-				1000,1000
-			};
-			std::vector<unsigned int> Indices = {
-				0, 1, 2,
-				0, 2, 3
-			};
-			VertexAssembly* planeVertexAssembly = new VertexAssembly(Vertices, Indices, Vertices, TexCoord, Vertices);
-			//Create the Mesh
-			Mesh* planeMesh = new Mesh(planeVertexAssembly,tex1);
-			//Add it to the planeObject
-			planeObject->AddComponent(planeMesh);
-			GameObjects.push_back(planeObject);
-			//GameObjects.push_back(boxBoundaries(PhysicsEngine));
+			VertexAssembly* wallVertexAssembly = WallAssembly(sizeX, sizeY, sizeZ);
+			GameObjects.push_back(wallBoundaries(PhysicsEngine, tex1, wallVertexAssembly, 0, 0, sizeX,0 ,0 ,0, 1));
+			GameObjects.push_back(wallBoundaries(PhysicsEngine, tex1, wallVertexAssembly,  -sizeX, 0, 0, 0, 1, 0, 1));
+			GameObjects.push_back(wallBoundaries(PhysicsEngine, tex1, wallVertexAssembly, sizeX, 0, 0, 0, 1, 0, 1));
+			GameObjects.push_back(wallBoundaries(PhysicsEngine, tex1, wallVertexAssembly, 0, 0, -sizeX, 0, 0, 0, 1));
+			VertexAssembly* groundVertexAssembly = GroundAssembly(sizeX);
+			GameObjects.push_back(groundBoundaries(PhysicsEngine, tex1, groundVertexAssembly, 0, -5, 0, 0, 0, 0, 1));
 		}
 		else
 		{
-			//Create a sphere object of name Spherei
-			Object* sphereObject = new Object("Sphere%d" + i);
-			//Create the sphere in a physic way
-			PhysicsEngine->CreateSphere(sphereRadius, (float)distrX(gen), (float)distrY(gen), (float)distrZ(gen), 1.0f);
 			//Create the parameter for the render of the sphere
 			SolidSphere* sphereParameter = new SolidSphere(sphereRadius, 8, 10);
 			//Add them to a VertexAssembly
@@ -256,6 +245,10 @@ int main(int argc, char* argv[])
 																		sphereParameter->GetTexcoords(),
 																		sphereParameter->GetVertices()
 			);
+			//Create a sphere object of name Spherei
+			Object* sphereObject = new Object("Sphere%d" + i);
+			//Create the sphere in a physic way
+			PhysicsEngine->CreateSphere(sphereRadius, (float)distrX(gen), (float)distrY(gen), (float)distrZ(gen), 1.0f);
 			//Create the Mesh with the parameter from the VertexAssembly and indices from 
 			Mesh* sphereMesh = new Mesh(sphereVertexAssembly,tex2);
 			//add it to the sphereObject
@@ -384,8 +377,6 @@ int main(int argc, char* argv[])
 
 		cam.SetView();
 		cam.SetProjection();
-
-		var += boxMesh->DrawPlane();
 		for (size_t i = 0; i < GameObjects.size(); i++)
 		{
 			Mesh* MeshComponent = (Mesh*)GameObjects[i]->GetSpecificComponent(ComponentName::MESH_COMPONENT);
@@ -395,7 +386,7 @@ int main(int argc, char* argv[])
 			Model *= mat4(quaternionRotation);
 			glm::mat4 MVP = cam.GetProjection() * cam.GetView() * Model;
             prog1.UpdateCamera(&MVP[0][0], &Model[0][0], &cam.GetView()[0][0]);
-            if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE || PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == BOX_SHAPE_PROXYTYPE)
+            if (PhysicsEngine->rigidbodies[i]->getCollisionShape()->getShapeType() == BOX_SHAPE_PROXYTYPE)
 			{
 				var += MeshComponent->DrawPlane();
 			}

@@ -71,7 +71,7 @@ void BulletPhysics::Update(float dt)
 	}*/
 }
 
-void BulletPhysics::CreateBox(float xHalfSize, float yHalfSize, float zHalfSize, float xPos, float yPos, float zPos, float XRota, float YRota, float ZRota, float Mass)
+void BulletPhysics::CreateBox(float xHalfSize, float yHalfSize, float zHalfSize, float xPos, float yPos, float zPos, float xRota, float yRota, float zRota, float wRota, float Mass)
 {
 	btCollisionShape* groundShape = new btBoxShape(btVector3(xHalfSize, yHalfSize, zHalfSize));
 
@@ -80,7 +80,11 @@ void BulletPhysics::CreateBox(float xHalfSize, float yHalfSize, float zHalfSize,
 	btTransform groundTransform;
 	groundTransform.setIdentity();
 	groundTransform.setOrigin(btVector3(xPos, yPos, zPos));
-	btQuaternion Rotation = btQuaternion(YRota, XRota, ZRota);
+	btQuaternion Rotation = btQuaternion(xRota, yRota, zRota, wRota);
+	printf("x quaternion : %f\n", Rotation.x());
+	printf("y quaternion : %f\n", Rotation.y());
+	printf("z quaternion : %f\n", Rotation.z());
+	printf("w quaternion : %f\n", Rotation.w());
 	groundTransform.setRotation(Rotation);
 
 	btScalar mass(Mass);
